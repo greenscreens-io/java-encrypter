@@ -4,6 +4,7 @@
 package io.greenscreens.sample;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import io.greenscreens.client.Builder;
 
@@ -26,7 +27,8 @@ public class ClientExample {
 
 		Builder builder = Builder.get(URL);
 		builder.setUUID("0").setHost("DEMO");
-		builder.setUser("QSECOFR").setPassword("QSECOFR");
+		builder.setUser("QSECOFR").setPassword("QSECOFR");	
+		builder.setExpiration(30, TimeUnit.SECONDS);
 		
 		URI uri = builder.build();
 		System.out.println(uri.toString());
@@ -35,7 +37,7 @@ public class ClientExample {
 	
 	/**
 	 * Best security option, if used, browser must send browser fingerprint, 
-	 * then use it to generate access url. No other browser will be able to reuse geenrated URL   
+	 * then use it to generate access url. No other browser will be able to reuse generated URL   
 	 * @throws Exception
 	 */
 	public static void testWithUrlSharingEnabled() throws Exception {

@@ -62,7 +62,19 @@ class TnLogin {
 	 */
 	private String token; 
 		
+	/**
+	 * Server timestamp synchronization
+	 * Used with bypass signon feature
+	 * If username and password are set, this should be set also
+	 */
 	private long ts;
+
+	/**
+	 * Expiration timestamp
+	 * After given time, encrypted URL will not be valid any more
+	 */
+	private long exp;
+	
 	
 	public String getUuid() {
 		return uuid;
@@ -191,5 +203,13 @@ class TnLogin {
 	public void setTs(long ts) {
 		this.ts = ts;
 	}
-	
+
+	public long getExp() {
+		return exp;
+	}
+
+	public void setExp(long exp) {
+		this.exp = exp;
+	}
+		
 }

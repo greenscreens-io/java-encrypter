@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -56,7 +57,10 @@ final public class Builder {
 	
 	private long appID; 
 	
-	private String token; 
+	private String token;
+	
+	private long exp;
+	private long ts;
 	
 	private String authUrl = "/services/auth";
 	private String loginUrl = "/lite";
@@ -215,7 +219,45 @@ final public class Builder {
 		return this;
 	}
 
-	private TnLogin getLogin(long timestamp) {
+	/**
+	 * Set encrypted url expiration in seconds.
+	 * @param value
+	 * @param unit
+	 * @return
+	 */
+	public Builder setExpiration(long value, TimeUnit unit) {
+		
+		if (value == 0) {
+			this.exp = 0;	
+		} else {
+			this.exp = unit.toMillis(value);
+		}
+		return this;
+	}
+	
+	/**
+	 * Get url encrypted expiration fixed to server time 
+	 * @return
+	 */
+	private long getExpiration() {
+		 return exp + ts;
+	}
+	
+	private Builder setTimestamp(long timestamp) {
+
+		long diff = System.currentTimeMillis() - timestamp;
+		
+		if (diff < 0) {
+			ts = System.currentTimeMillis() - diff;
+		} else {
+			ts = System.currentTimeMillis() + diff;
+		}
+		
+		return this;
+	}
+	
+	
+	private TnLogin getLogin() {
 		
 		final TnLogin login = new TnLogin();
 		
@@ -224,6 +266,7 @@ final public class Builder {
 		login.setCommonName(commonName);
 		login.setDisplayName(displayName);
 		login.setDriver(driver);
+		login.setExp(getExpiration());
 		login.setHost(host);
 		login.setIpAddress(ipAddress);
 		login.setLib(lib);
@@ -233,16 +276,8 @@ final public class Builder {
 		login.setProgram(program);		
 		login.setToken(token);
 		login.setUser(user);
-		login.setUuid(uuid);
-		
-		long diff = System.currentTimeMillis() - timestamp;
-		
-		if (diff < 0) {
-			diff = System.currentTimeMillis() - diff;
-		} else {
-			diff = System.currentTimeMillis() + diff;
-		}
-		login.setTs(diff);
+		login.setUuid(uuid);		
+		login.setTs(ts);
 		
 		return login;
 	}
@@ -264,15 +299,20 @@ final public class Builder {
 		
         final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
 		final Aes aesCrypt = Aes.get();
-		final PublicKey pk  = RsaUtil.getPublicKey(auth.getKey());		
-		final TnLogin login = getLogin(auth.getTs());
+		final PublicKey pk  = RsaUtil.getPublicKey(auth.getKey());	
+		
+		setTimestamp(auth.getTs());
+		final TnLogin login = getLogin();
 		
 		final String json = JsonUtil.stringify(login);
 		final String aesJson = aesCrypt.encrypt(json);
 		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk);
 		
-		return new URIBuilder(url +  loginUrl).setParameter("d", aesJson).setParameter("k", enc).setParameter("v", "123456789").build();
-
+		return new URIBuilder(url +  loginUrl)
+				.setParameter("d", aesJson)
+				.setParameter("k", enc)
+				.setParameter("v", Long.toString(appID))
+				.build();
 	}
 	
 	/**
