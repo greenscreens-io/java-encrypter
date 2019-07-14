@@ -45,7 +45,7 @@ public class ServletExample extends HttpServlet {
 		}
 			
 		try {
-			Builder builder = Builder.get(URL, appID);
+			Builder builder = Builder.get(URL, appID, null, null);
 			builder.setUUID("2").setHost("DEMO");
 			builder.setUser("QSECOFR").setPassword("QSECOFR");
 			builder.setIpAddress(ipAddress);

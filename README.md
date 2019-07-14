@@ -2,7 +2,7 @@ JAVA Url Encrypter
 ===================
 
 
-GreenScreens Web 5250 Terminal URL address uses custom encryption based on RSA algorithm generated at GreenScreens Terminal Service to protect URL parameters like auto sign-on data.  
+Green Screens Web 5250 Terminal URL address uses custom encryption based on RSA algorithm generated at Green Screens Terminal Service to protect URL parameters like auto sign-on data.
 
 Java URL Encrypter is an integration supporting library to create encrypted web terminal access URL.
 

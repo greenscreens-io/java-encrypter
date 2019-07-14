@@ -4,14 +4,17 @@
 package io.greenscreens.client;
 
 import java.net.URI;
+import java.security.Key;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.client.fluent.AuthResponse;
@@ -29,11 +32,16 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 
+import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
+
 /**
  * Green Screens Web Terminal Connection generator builder
  */
 final public class Builder {
 
+	private String otpKey;
+	private String apiKey;
+	
 	private String url;
 	
 	private String uuid;
@@ -72,8 +80,8 @@ final public class Builder {
 	 * @param fingerprint
 	 * @return
 	 */
-	public static Builder get(String url, long fingerprint) {
-		return new Builder(url, fingerprint);
+	public static Builder get(String url, long fingerprint, String apiKey, String otpKey) {
+		return new Builder(url, fingerprint, apiKey, otpKey);
 	}
 
 	/**
@@ -82,8 +90,8 @@ final public class Builder {
 	 * @param url
 	 * @return
 	 */
-	public static Builder get(String url) {
-		return new Builder(url, 0);
+	public static Builder get(String url, String apiKey, String otpKey) {
+		return new Builder(url, 0, apiKey, otpKey);
 	}
 
 	/**
@@ -91,10 +99,12 @@ final public class Builder {
 	 * @param url
 	 * @param fingerprint
 	 */
-	private Builder(String url, long fingerprint) {
+	private Builder(String url, long fingerprint, String apiKey, String otpKey) {
 		super();
 		this.url = url;
 		this.appID = fingerprint;
+		this.apiKey = apiKey;
+		this.otpKey = otpKey;
 	}
 
 	/**
@@ -255,12 +265,32 @@ final public class Builder {
 		
 		return this;
 	}
-	
+
+	private int getOtpToken() {
+		int token = 0;
+		if (otpKey != null && otpKey.trim().length()>0) {
+			try {
+				final TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
+
+				final byte [] data = Base32.decode(otpKey);
+		  	    final Key key = new SecretKeySpec(data, totp.getAlgorithm());
+				    
+				final Instant now = Instant.now();
+				token = totp.generateOneTimePassword(key, now);
+				
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return token;
+	}
 	
 	private TnLogin getLogin() {
 		
+		final int otpToken = getOtpToken();
 		final TnLogin login = new TnLogin();
-		
+		login.setKey(apiKey);
+		login.setOtp(otpToken);
 		login.setAppID(appID);
 		login.setCodePage(codePage);
 		login.setCommonName(commonName);

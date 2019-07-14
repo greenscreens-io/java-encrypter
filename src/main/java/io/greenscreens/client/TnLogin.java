@@ -10,6 +10,9 @@ package io.greenscreens.client;
  */
 class TnLogin {
 
+	private String key;
+	private int otp;
+	
 	private String uuid;	
 	private String host;
 	
@@ -211,5 +214,22 @@ class TnLogin {
 	public void setExp(long exp) {
 		this.exp = exp;
 	}
-		
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public int getOtp() {
+		return otp;
+	}
+
+	public void setOtp(int otp) {
+		this.otp = otp;
+	}
+	
+	
 }

@@ -10,11 +10,11 @@ import io.greenscreens.client.Builder;
 
 public class ClientExample {
 
-	public static final String URL  = "http://localhost:9080/";
+	public static final String URL  = "http://localhost/";
 	public static final String SSL_URL = "https://localhost:9443/";
 	
 	public static void main(String[] args) throws Exception {
-		testWithUrlSharingDisabled();
+		testWithApiKey();
 	}
 
 	/**
@@ -23,9 +23,47 @@ public class ClientExample {
 	 * to prevent reuse generated URL  
 	 * @throws Exception
 	 */
+	public static void testWithOtp() throws Exception {
+
+		final String otpKey = "WWLWGFYJIF7RMXAY";
+		Builder builder = Builder.get(URL, null, otpKey);
+		builder.setUUID("0").setHost("DEMO");
+		builder.setUser("QSECOFR").setPassword("QSECOFR");	
+		builder.setExpiration(30, TimeUnit.SECONDS);
+		
+		URI uri = builder.build();
+		System.out.println(uri.toString());
+
+	}
+
+	/**
+	 * Generate URl with access based on ApiKey.  
+	 * OTP is ignored, password will not expire
+	 * Access is checked by client IP address and IP registered with API Key
+	 * @throws Exception
+	 */
+	public static void testWithApiKey() throws Exception {
+
+		final String apiKey = "1a4e39c8-07d9-4a2b-b021-d1f4103d1a22";
+		Builder builder = Builder.get(URL, apiKey, null);
+		builder.setUUID("0").setHost("DEMO");
+		builder.setUser("QSECOFR").setPassword("QSECOFR");	
+		builder.setExpiration(30, TimeUnit.SECONDS);
+		
+		URI uri = builder.build();
+		System.out.println(uri.toString());
+
+	}
+	
+	/**
+	 * If username / passwords used, security is based on password timeout,
+	 * Additionally, use fixed display name and autoincrement disabled in admin console 
+	 * to prevent reuse generated URL  
+	 * @throws Exception
+	 */
 	public static void testWithUrlSharingDisabled() throws Exception {
 
-		Builder builder = Builder.get(URL);
+		Builder builder = Builder.get(URL, null, null);
 		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");	
 		builder.setExpiration(30, TimeUnit.SECONDS);
@@ -45,7 +83,7 @@ public class ClientExample {
 		// fingerprint or mobile app id 
 		long appID = 1234567890;
 		
-		Builder builder = Builder.get(SSL_URL, appID);
+		Builder builder = Builder.get(SSL_URL, appID, null, null);
 		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");
 		
