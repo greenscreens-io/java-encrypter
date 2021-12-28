@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2018 Green Screens Ltd.
  */
 package io.greenscreens.sample;
 
@@ -22,6 +22,7 @@ public class ServletExample extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
+	// Green Screens Server URL
 	private static final String URL  = "http://localhost:9080/";
 
 	/**
@@ -32,20 +33,11 @@ public class ServletExample extends HttpServlet {
 	@Override
 	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 		
-		final String fingerprint = req.getParameter("fp");
-		final String ipAddress = IpUtils.getClientIpAddress(req);
-		
-		long appID = 0;
-		try {
-			if (fingerprint != null) {
-				appID = Long.parseLong(fingerprint);
-			}
-		} catch (NumberFormatException e ) {
-			e.printStackTrace();
-		}
+		final String ipAddress = IpUtils.getClientIpAddress(req);		
+		final long appID = getFingerprint(req);
 			
 		try {
-			Builder builder = Builder.get(URL, appID, null, null);
+			final Builder builder = Builder.get(URL, appID, null, null);
 			builder.setUUID("2").setHost("DEMO");
 			builder.setUser("QSECOFR").setPassword("QSECOFR");
 			builder.setIpAddress(ipAddress);
@@ -70,4 +62,53 @@ public class ServletExample extends HttpServlet {
 		doGet(req, resp);
 	}
 
+	/**
+	 * Get client browser fingerprint calculated with fingerprint.js
+	 * @param req
+	 * @return
+	 */
+	protected long getFingerprint(final HttpServletRequest req) {
+		
+		final String fingerprint = req.getParameter("fp");
+		long appID = 0;
+		
+		try {
+			if (nonEmpty(fingerprint)) {
+				appID = Long.parseLong(fingerprint);
+			}
+		} catch (NumberFormatException e ) {
+			e.printStackTrace();
+		}
+
+		return appID;
+				
+	}
+
+	/**
+	 * Is string value non-empty
+	 * @param value
+	 * @return
+	 */
+	protected boolean nonEmpty(final String value) {
+		return !isEmpty(value);
+	}
+
+	/**
+	 * Is string value empty
+	 * @param value
+	 * @return
+	 */
+	protected boolean isEmpty(final String value) {
+		return normalize(value).length() == 0;
+	}
+
+	/**
+	 * Normalize string to non null value
+	 * @param value
+	 * @return
+	 */
+	protected String normalize(final String value) {
+		if (value == null) return "";
+		return value.trim();
+	}
 }
