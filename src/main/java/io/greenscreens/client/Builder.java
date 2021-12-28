@@ -1,8 +1,14 @@
 /*
- * Copyright (C) 2015 - 2018 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
+/* for build2()
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+ */
 import java.net.URI;
 import java.security.Key;
 import java.security.KeyManagementException;
@@ -27,7 +33,7 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
@@ -312,6 +318,38 @@ final public class Builder {
 		return login;
 	}
 	
+	/* Java 17 Http client; no need for apache lib.
+	public URI build2() throws Exception {
+
+		 final SSLContext sslContext = new SSLContextBuilder()  
+	                .loadTrustMaterial(null, new TrustStrategy() {						
+						public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+							return true;
+						}
+					})
+	                .build(); 
+		 
+		 
+		final HttpClient httpClient = HttpClient.newBuilder()
+	            .version(HttpClient.Version.HTTP_1_1)
+	            .connectTimeout(Duration.ofSeconds(10))
+	            .sslContext(sslContext)
+	            .build();
+	    
+        final HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(url + authUrl))
+                .setHeader("User-Agent", "Green Screens Client") 
+                .build();
+
+        final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        
+        final String data = response.body();
+        
+        return dataToUri(data);
+	}
+	 */
+	
 	/**
 	 * Generate access URL
 	 * @return
@@ -326,6 +364,11 @@ final public class Builder {
 		final String data = authResp.returnContent().asString();
 		
         authResp.discardContent();
+		
+		return dataToUri(data);
+	}
+	
+	public URI dataToUri(final String data) throws Exception {
 		
         final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
 		final Aes aesCrypt = Aes.get();
@@ -359,19 +402,23 @@ final public class Builder {
 						public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
 							return true;
 						}
-					}) .build();  
-	      
+					}).build();  
+	     
+		 // NOTE - TLS1.2 TLS 1.3 can not be mixed, for TLS 1.3 Java 12+ is required
+		 
+		 final String[] versions = new String[]{"TLSv1.2"};
+		 //final String[] versions = new String[]{"TLSv1.3"};
+		 
+		 final SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, versions , null, NoopHostnameVerifier.INSTANCE);
+		 
 	      final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(  
                   RegistryBuilder.<ConnectionSocketFactory>create()  
                   .register("http", PlainConnectionSocketFactory.INSTANCE)  
-                  .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))  
+                  .register("https", factory)  
                   .build()  
                   );
           
-	      return HttpClientBuilder.create()  
-	                .setSSLContext(sslContext)  
-	                .setConnectionManager(manager)  
-	                .build();  
+	      return HttpClients.custom().setSSLSocketFactory(factory).setConnectionManager(manager).build();
 	 }  
 	
 }

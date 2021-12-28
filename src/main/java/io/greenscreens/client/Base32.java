@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ */
 package io.greenscreens.client;
 
 import java.util.HashMap;

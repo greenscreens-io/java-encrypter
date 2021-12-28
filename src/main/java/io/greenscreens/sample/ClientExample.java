@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2018 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.sample;
 
@@ -11,12 +11,32 @@ import io.greenscreens.client.Builder;
 public class ClientExample {
 
 	public static final String URL  = "http://localhost/";
-	public static final String SSL_URL = "https://localhost:9443/";
+	public static final String SSL_URL = "https://localhost:8443/";
 	
 	public static void main(String[] args) throws Exception {
-		testWithApiKey();
+		testPlain();
 	}
 
+	/**
+	 * Test basic login as used on web login page without extra security measures involved
+	 * Fingerprint must be created on browser side by provided fingerprint.js.
+	 * It creates a unique browser session id calculated on browser internal settings.
+	 * Fingerprint changes over time, but last long enough for encrypted url to work.
+	 * Fingerprint along client IP address is an additional measure to prevent session hijacking.
+	 * @throws Exception
+	 */
+	public static void testPlain() throws Exception {
+		Builder builder = Builder.get(URL, 1568658458, null, null);
+		builder.setUUID("0").setHost("PUB400");
+		builder.setUser("QSECOFR").setPassword("QSECOFR");
+		builder.setDisplayName("DSPGSADMIN");
+		builder.setExpiration(30, TimeUnit.SECONDS);
+		builder.setIpAddress("127.0.0.1");
+		
+		URI uri = builder.build();
+		System.out.println(uri.toString());
+	}
+	
 	/**
 	 * If username / passwords used, security is based on password timeout,
 	 * Additionally, use fixed display name and autoincrement disabled in admin console 
@@ -29,7 +49,9 @@ public class ClientExample {
 		Builder builder = Builder.get(URL, null, otpKey);
 		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");	
+		builder.setDisplayName("DSPGSADMIN");
 		builder.setExpiration(30, TimeUnit.SECONDS);
+		builder.setIpAddress("127.0.0.1");
 		
 		URI uri = builder.build();
 		System.out.println(uri.toString());
@@ -47,8 +69,10 @@ public class ClientExample {
 		final String apiKey = "1a4e39c8-07d9-4a2b-b021-d1f4103d1a22";
 		Builder builder = Builder.get(URL, apiKey, null);
 		builder.setUUID("0").setHost("DEMO");
-		builder.setUser("QSECOFR").setPassword("QSECOFR");	
+		builder.setUser("QSECOFR").setPassword("QSECOFR");
+		builder.setDisplayName("DSPGSADMIN");
 		builder.setExpiration(30, TimeUnit.SECONDS);
+		builder.setIpAddress("127.0.0.1");
 		
 		URI uri = builder.build();
 		System.out.println(uri.toString());
@@ -66,7 +90,9 @@ public class ClientExample {
 		Builder builder = Builder.get(URL, null, null);
 		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");	
+		builder.setDisplayName("DSPGSADMIN");
 		builder.setExpiration(30, TimeUnit.SECONDS);
+		builder.setIpAddress("127.0.0.1");
 		
 		URI uri = builder.build();
 		System.out.println(uri.toString());
@@ -86,6 +112,7 @@ public class ClientExample {
 		Builder builder = Builder.get(SSL_URL, appID, null, null);
 		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");
+		builder.setIpAddress("127.0.0.1");
 		
 		URI uri = builder.build();
 		System.out.println(uri.toString());
