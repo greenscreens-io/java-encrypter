@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2018 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -389,7 +389,8 @@ final public class Builder {
 	}
 	
 	/**
-	 * HTTP Client with support for SSL 
+	 * HTTP Client with support for SSL
+	 * NOTE - for TLS 1.3 Java 12+ is required 
 	 * @return
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
@@ -404,10 +405,7 @@ final public class Builder {
 						}
 					}).build();  
 	     
-		 // NOTE - TLS1.2 TLS 1.3 can not be mixed, for TLS 1.3 Java 12+ is required
-		 
-		 final String[] versions = new String[]{"TLSv1.2"};
-		 //final String[] versions = new String[]{"TLSv1.3"};
+		 final String[] versions = new String[]{"TLSv1.2", "TLSv1.3"};
 		 
 		 final SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, versions , null, NoopHostnameVerifier.INSTANCE);
 		 
