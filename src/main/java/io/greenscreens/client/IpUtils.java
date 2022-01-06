@@ -3,6 +3,7 @@
  */
 package io.greenscreens.client;
 
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
@@ -79,11 +80,11 @@ public enum IpUtils {
 		
 			ip = request.getHeader(header);
 			
-			if (ip!= null) {
+			if (Objects.nonNull(ip)) {
 				ip = detectIP(ip);
 			}
 			
-			if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+			if (Objects.nonNull(ip) && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
 				return ip;
 			
 			}

@@ -5,8 +5,10 @@ package io.greenscreens.client;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Objects;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -25,7 +27,7 @@ final class Aes {
 
 	private static Log LOG = LogFactory.getLog(Aes.class);
 	
-	final private static Charset UTF8 = Charset.forName("UTF-8");
+	final private static Charset UTF8 = StandardCharsets.UTF_8;
 	
 	private static Cipher cipher;
 	private static SecureRandom randomSecureRandom; 
@@ -81,7 +83,7 @@ final class Aes {
 	 */
 	private byte[] encryptData(final String text, final IvParameterSpec iv) throws Exception {
 
-		if (text == null || text.length() == 0) {
+		if (Objects.isNull(text) || text.length() == 0) {
 			throw new Exception("Empty string");
 		}
 
@@ -143,7 +145,7 @@ final class Aes {
 		final int x = source.length() % size;
 		final int padLength = size - x;
 
-		final StringBuffer sb = new StringBuffer(source);
+		final StringBuilder sb = new StringBuilder(source);
 
 		for (int i = 0; i < padLength; i++) {
 			sb.append(paddingChar);
@@ -160,12 +162,12 @@ final class Aes {
 	 */
 	public static String bytesToHex(final byte[] data) {
 
-		if (data == null) {
+		if (Objects.isNull(data)) {
 			return null;
 		}
 
 		int len = data.length;
-		StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < len; i++) {
 			if ((data[i] & 0xFF) < 16) {
@@ -186,7 +188,7 @@ final class Aes {
 	 */
 	public static byte[] hexToBytes(final String str) {
 
-		if (str == null || str.length() < 2) {
+		if (Objects.isNull(str) || str.length() < 2) {
 			return null;
 		}
 
