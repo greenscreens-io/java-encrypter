@@ -31,6 +31,35 @@
 		<jackson.version>2.13.0</jackson.version>
 		<bcastle.version>1.69</bcastle.version>
 	</properties>
+	
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://github.com/greenscreens-io/java-encrypter/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:greenscreens-io/quark-java.git</connection>
+        <developerConnection>scm:git:git@github.com:greenscreens-io/java-encrypter.git</developerConnection>
+        <url>https://github.com/greenscreens-io/java-encrypter</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/greenscreens-io/java-encrypter/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+       <repository>
+         <id>github</id>
+         <name>GitHub greenscreens-io Apache Maven Packages</name>
+         <url>https://maven.pkg.github.com/greenscreens-io/java-encrypter</url>
+       </repository>
+    </distributionManagement>
+	
   <dependencies>
   
 		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
