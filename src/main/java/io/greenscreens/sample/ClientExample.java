@@ -27,7 +27,7 @@ public class ClientExample {
 	 */
 	public static void testPlain() throws Exception {
 		Builder builder = Builder.get(URL, 1568658458, null, null);
-		builder.setUUID("0").setHost("PUB400");
+		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");
 		builder.setDisplayName("DSPGSADMIN");
 		builder.setExpiration(30, TimeUnit.SECONDS);

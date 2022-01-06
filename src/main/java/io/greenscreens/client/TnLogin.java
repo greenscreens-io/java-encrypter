@@ -33,7 +33,8 @@ class TnLogin {
 	 * If printer name is set,
 	 * use this to enable one of available printer drivers
 	 * 0 - PDF, 1- html, 2 - txt, 3 - json, 
-	 * 4 - raw , 5 - etl, 6 - jsx, 7 - hpt 
+	 * 4 - raw , 5 - img, 6 - jsx, 7 - hpt 
+	 * 8 - zebram, 9 - ESCPOS, 10 - userascii, 11 - svg
 	 */
 	private int driver = 0;
 	

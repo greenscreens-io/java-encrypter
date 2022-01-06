@@ -40,6 +40,14 @@
 		    <version>3.1.0</version>
 		    <scope>provided</scope>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.eatthepath/java-otp -->
+		<dependency>
+		    <groupId>com.eatthepath</groupId>
+		    <artifactId>java-otp</artifactId>
+		    <version>0.3.1</version>
+		</dependency>
+		
   
 		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
 		<dependency>
@@ -92,21 +100,21 @@
 		    <version>4.5.13</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
 
   </dependencies>
 

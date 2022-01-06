@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2018 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.SSLContext;
 
+import org.apache.commons.codec.binary.Base32;
 import org.apache.http.client.fluent.AuthResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -39,6 +40,7 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
+
 
 /**
  * Green Screens Web Terminal Connection generator builder
@@ -278,7 +280,7 @@ final public class Builder {
 			try {
 				final TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
 
-				final byte [] data = Base32.decode(otpKey);
+				final byte [] data = new Base32().decode(otpKey);
 		  	    final Key key = new SecretKeySpec(data, totp.getAlgorithm());
 				    
 				final Instant now = Instant.now();
@@ -290,7 +292,7 @@ final public class Builder {
 		}
 		return token;
 	}
-	
+		
 	private TnLogin getLogin() {
 		
 		final int otpToken = getOtpToken();
@@ -318,7 +320,7 @@ final public class Builder {
 		return login;
 	}
 	
-	/* Java 17 Http client; no need for apache lib.
+	/* Java 17 Http client; no need for apache http lib.
 	public URI build2() throws Exception {
 
 		 final SSLContext sslContext = new SSLContextBuilder()  
