@@ -1,6 +1,9 @@
 JAVA Url Encrypter
 ===================
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/greenscreens-io/java-encrypter?style=plastic)
+![GitHub](https://img.shields.io/github/license/greenscreens-io/java-encrypter?style=plastic)
+
 ![Compile](https://github.com/greenscreens-io/java-encrypter/actions/workflows/maven.yml/badge.svg?branch=master) 
 
 Green Screens Web 5250 Terminal URL address uses custom encryption based on RSA algorithm generated at Green Screens Terminal Service to protect URL parameters like auto sign-on data.
