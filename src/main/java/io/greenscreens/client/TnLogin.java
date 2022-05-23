@@ -79,6 +79,13 @@ class TnLogin {
 	 */
 	private long exp;
 	
+	/**
+	 * Expiration mode determine what happens link is expired
+	 * 0 - strict mode - disconnect session
+	 * 0 - flex   mode - shows signon  
+	 */
+	private int expMode;
+	
 	
 	public String getUuid() {
 		return uuid;
@@ -214,6 +221,14 @@ class TnLogin {
 
 	public void setExp(long exp) {
 		this.exp = exp;
+	}
+
+	public int getExpMode() {
+		return expMode;
+	}
+
+	public void setExpMode(int expMode) {
+		this.expMode = expMode;
 	}
 
 	public String getKey() {

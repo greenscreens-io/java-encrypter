@@ -45,8 +45,10 @@ import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
 /**
  * Green Screens Web Terminal Connection generator builder
  */
-final public class Builder {
+public final class Builder {
 
+	public enum ExpirationMode {STRICT, FLEXIBLE}
+	
 	private String otpKey;
 	private String apiKey;
 	
@@ -75,6 +77,7 @@ final public class Builder {
 	
 	private String token;
 	
+	private int expMode;
 	private long exp;
 	private long ts;
 	
@@ -88,7 +91,7 @@ final public class Builder {
 	 * @param fingerprint
 	 * @return
 	 */
-	public static Builder get(String url, long fingerprint, String apiKey, String otpKey) {
+	public static Builder get(final String url, final long fingerprint, final String apiKey, final String otpKey) {
 		return new Builder(url, fingerprint, apiKey, otpKey);
 	}
 
@@ -98,7 +101,7 @@ final public class Builder {
 	 * @param url
 	 * @return
 	 */
-	public static Builder get(String url, String apiKey, String otpKey) {
+	public static Builder get(final String url, final String apiKey, final String otpKey) {
 		return new Builder(url, 0, apiKey, otpKey);
 	}
 
@@ -107,7 +110,7 @@ final public class Builder {
 	 * @param url
 	 * @param fingerprint
 	 */
-	private Builder(String url, long fingerprint, String apiKey, String otpKey) {
+	private Builder(final String url, final long fingerprint, final String apiKey, final String otpKey) {
 		super();
 		this.url = url;
 		this.appID = fingerprint;
@@ -120,7 +123,7 @@ final public class Builder {
 	 * @param uuid
 	 * @return
 	 */
-	public Builder setUUID(String uuid) {
+	public Builder setUUID(final String uuid) {
 		this.uuid = uuid;
 		return this;
 	}
@@ -130,7 +133,7 @@ final public class Builder {
 	 * @param host
 	 * @return
 	 */
-	public Builder setHost(String host) {
+	public Builder setHost(final String host) {
 		this.host = host;
 		return this;
 	}
@@ -140,7 +143,7 @@ final public class Builder {
 	 * @param user
 	 * @return
 	 */
-	public Builder setUser(String user) {
+	public Builder setUser(final String user) {
 		this.user = user;
 		return this;
 	}
@@ -150,47 +153,47 @@ final public class Builder {
 	 * @param password
 	 * @return
 	 */
-	public Builder setPassword(String password) {
+	public Builder setPassword(final String password) {
 		this.password = password;
 		return this;
 	}
 
-	public Builder setProgram(String program) {
+	public Builder setProgram(final String program) {
 		this.program = program;
 		return this;
 	}
 
-	public Builder setMenu(String menu) {
+	public Builder setMenu(final String menu) {
 		this.menu = menu;
 		return this;
 	}
 
-	public Builder setLib(String lib) {
+	public Builder setLib(final String lib) {
 		this.lib = lib;
 		return this;
 	}
 
-	public Builder setDisplayName(String displayName) {
+	public Builder setDisplayName(final String displayName) {
 		this.displayName = displayName;
 		return this;
 	}
 
-	public Builder setPrinterName(String printerName) {
+	public Builder setPrinterName(final String printerName) {
 		this.printerName = printerName;
 		return this;
 	}
 
-	public Builder setDriver(int driver) {
+	public Builder setDriver(final int driver) {
 		this.driver = driver;
 		return this;
 	}
 
-	public Builder setCodePage(String codePage) {
+	public Builder setCodePage(final String codePage) {
 		this.codePage = codePage;
 		return this;
 	}
 
-	public Builder setCommonName(String commonName) {
+	public Builder setCommonName(final String commonName) {
 		this.commonName = commonName;
 		return this;
 	}
@@ -200,7 +203,7 @@ final public class Builder {
 	 * @param ipAddress
 	 * @return
 	 */
-	public Builder setIpAddress(String ipAddress) {
+	public Builder setIpAddress(final String ipAddress) {
 		this.ipAddress = ipAddress;
 		return this;
 	}
@@ -210,7 +213,7 @@ final public class Builder {
 	 * @param token
 	 * @return
 	 */
-	public Builder setToken(String token) {
+	public Builder setToken(final String token) {
 		this.token = token;
 		return this;
 	}
@@ -221,7 +224,7 @@ final public class Builder {
 	 * @param authUrl
 	 * @return
 	 */
-	public Builder setAuthUrl(String authUrl) {
+	public Builder setAuthUrl(final String authUrl) {
 		this.authUrl = authUrl;
 		return this;
 	}
@@ -232,18 +235,23 @@ final public class Builder {
 	 * @param loginUrl
 	 * @return
 	 */
-	public Builder setLoginUrl(String loginUrl) {
+	public Builder setLoginUrl(final String loginUrl) {
 		this.loginUrl = loginUrl;
 		return this;
 	}
 
+	public Builder setExpirationMode(final ExpirationMode mode) {
+		this.expMode = mode.ordinal();
+		return this;
+	}
+	
 	/**
 	 * Set encrypted url expiration in seconds.
 	 * @param value
 	 * @param unit
 	 * @return
 	 */
-	public Builder setExpiration(long value, TimeUnit unit) {
+	public Builder setExpiration(final long value, final TimeUnit unit) {
 		
 		if (value == 0) {
 			this.exp = 0;	
@@ -261,7 +269,7 @@ final public class Builder {
 		 return exp + ts;
 	}
 	
-	private Builder setTimestamp(long timestamp) {
+	private Builder setTimestamp(final long timestamp) {
 
 		long diff = System.currentTimeMillis() - timestamp;
 		
@@ -316,6 +324,7 @@ final public class Builder {
 		login.setUser(user);
 		login.setUuid(uuid);		
 		login.setTs(ts);
+		login.setExpMode(expMode);
 		
 		return login;
 	}

@@ -30,9 +30,12 @@ public class ClientExample {
 		builder.setUUID("0").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");
 		builder.setDisplayName("DSPGSADMIN");
-		builder.setExpiration(30, TimeUnit.SECONDS);
 		builder.setIpAddress("127.0.0.1");
 		
+		builder.setExpiration(30, TimeUnit.SECONDS);
+		// If FLEXIBLE - don't close connection - show sigon 
+		builder.setExpirationMode(ExpirationMode.FLEXIBLE);
+
 		URI uri = builder.build();
 		System.out.println(uri.toString());
 	}
