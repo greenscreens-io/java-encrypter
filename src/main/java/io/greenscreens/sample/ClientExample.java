@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import io.greenscreens.client.Builder;
+import io.greenscreens.client.Builder.ExpirationMode;
 
 public class ClientExample {
 
