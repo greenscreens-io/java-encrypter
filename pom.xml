@@ -28,7 +28,7 @@
 		<maven.war.version>3.3.1</maven.war.version>
 		<maven.proguard.version>2.5.1</maven.proguard.version>
 		<maven.test.version>3.0.0-M5</maven.test.version>
-		<jackson.version>2.13.2.1</jackson.version>
+		<jackson.version>2.13.3</jackson.version>
 		<bcastle.version>1.69</bcastle.version>
 	</properties>
 	
