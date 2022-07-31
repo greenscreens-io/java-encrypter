@@ -14,6 +14,12 @@ class TnAuth {
 	private String key;
 	private String ip;
 	
+	// server version
+	private String version;
+	
+	// server build
+	private int build;
+	
 	public long getTs() {
 		return ts;
 	}
@@ -44,6 +50,22 @@ class TnAuth {
 	
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public int getBuild() {
+		return build;
+	}
+
+	public void setBuild(int build) {
+		this.build = build;
 	}
 
 }

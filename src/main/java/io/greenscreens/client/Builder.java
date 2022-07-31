@@ -47,6 +47,18 @@ import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
  */
 public final class Builder {
 
+	/**
+	 * To support older GS server version
+	 */
+	public static final String LOGIN_URL_1 = "/lite";
+	
+	/**
+	 * GS Server build GT 20220725
+	 */
+	public static final String LOGIN_URL_2 = "/terminal";
+
+	public static final String AUTH_URL = "/services/auth";
+	
 	public enum ExpirationMode {STRICT, FLEXIBLE}
 	
 	private String otpKey;
@@ -81,8 +93,8 @@ public final class Builder {
 	private long exp;
 	private long ts;
 	
-	private String authUrl = "/services/auth";
-	private String loginUrl = "/lite";
+	private String authUrl = AUTH_URL;
+	private String loginUrl = LOGIN_URL_1;
 	
 	/**
 	 * Get builder instance with targeted browser fingerprint
@@ -219,27 +231,12 @@ public final class Builder {
 	}
 
 	/**
-	 * Set custom service authorization url
-	 * Default is /services/auth
-	 * @param authUrl
+	 * Determine what server will do if auto-login token is expired
+	 * In felxible mode, it will show signon screen
+	 * In strict mode, it will disconnect sessio
+	 * @param mode
 	 * @return
 	 */
-	public Builder setAuthUrl(final String authUrl) {
-		this.authUrl = authUrl;
-		return this;
-	}
-
-	/**
-	 * Set custom web terminal url
-	 * Default is /lite
-	 * @param loginUrl
-	 * @return
-	 */
-	public Builder setLoginUrl(final String loginUrl) {
-		this.loginUrl = loginUrl;
-		return this;
-	}
-
 	public Builder setExpirationMode(final ExpirationMode mode) {
 		this.expMode = mode.ordinal();
 		return this;
@@ -312,7 +309,6 @@ public final class Builder {
 		login.setCommonName(commonName);
 		login.setDisplayName(displayName);
 		login.setDriver(driver);
-		login.setExp(getExpiration());
 		login.setHost(host);
 		login.setIpAddress(ipAddress);
 		login.setLib(lib);
@@ -324,6 +320,8 @@ public final class Builder {
 		login.setUser(user);
 		login.setUuid(uuid);		
 		login.setTs(ts);
+		login.setExp(getExpiration());
+		//login.setTs(getExpiration());
 		login.setExpMode(expMode);
 		
 		return login;
@@ -391,11 +389,14 @@ public final class Builder {
 		final String json = JsonUtil.stringify(login);
 		final String aesJson = aesCrypt.encrypt(json);
 		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk);
+		final String v = Integer.toString(Long.toString(appID).hashCode());
 		
-		return new URIBuilder(url +  loginUrl)
+		final String service = auth.getBuild() >= 20220725 ? LOGIN_URL_2 : LOGIN_URL_1;  
+		
+		return new URIBuilder(url +  service)
 				.setParameter("d", aesJson)
 				.setParameter("k", enc)
-				.setParameter("v", Long.toString(appID))
+				.setParameter("v", v)
 				.build();
 	}
 	
@@ -431,3 +432,4 @@ public final class Builder {
 	 }  
 	
 }
+

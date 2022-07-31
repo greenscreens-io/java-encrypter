@@ -20,10 +20,11 @@ public class ClientExample {
 
 	/**
 	 * Test basic login as used on web login page without extra security measures involved
-	 * Fingerprint must be created on browser side by provided fingerprint.js.
-	 * It creates a unique browser session id calculated on browser internal settings.
+	 * Fingerprint must be created on browser side by provided fingerprint.js. (Tn5250.client.fingerprint value in terminal session)
+	 * It creates a unique browser id. Calculation is based on browser internal settings.
 	 * Fingerprint changes over time, but last long enough for encrypted url to work.
 	 * Fingerprint along client IP address is an additional measure to prevent session hijacking.
+	 * "Prevent URL sharing" feature must be enabled inside web admin console -> server host configuration to enable fingerprint validation.
 	 * @throws Exception
 	 */
 	public static void testPlain() throws Exception {
