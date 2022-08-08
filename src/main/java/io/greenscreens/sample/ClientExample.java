@@ -11,8 +11,8 @@ import io.greenscreens.client.Builder.ExpirationMode;
 
 public class ClientExample {
 
-	public static final String URL  = "http://localhost/";
-	public static final String SSL_URL = "https://localhost:8443/";
+	public static final String URL  = "http://localhost";
+	public static final String SSL_URL = "https://localhost:8443";
 	
 	public static void main(String[] args) throws Exception {
 		testPlain();
