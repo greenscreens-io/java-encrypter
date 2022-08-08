@@ -41,7 +41,6 @@ import org.apache.http.ssl.TrustStrategy;
 
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
 
-
 /**
  * Green Screens Web Terminal Connection generator builder
  */
@@ -51,21 +50,23 @@ public final class Builder {
 	 * To support older GS server version
 	 */
 	public static final String LOGIN_URL_1 = "/lite";
-	
+
 	/**
 	 * GS Server build GT 20220725
 	 */
 	public static final String LOGIN_URL_2 = "/terminal";
 
 	public static final String AUTH_URL = "/services/auth";
-	
-	public enum ExpirationMode {STRICT, FLEXIBLE}
-	
+
+	public enum ExpirationMode {
+		STRICT, FLEXIBLE
+	}
+
 	private String otpKey;
 	private String apiKey;
-	
+
 	private String url;
-	
+
 	private String uuid;
 	private String host;
 	private String user;
@@ -78,27 +79,27 @@ public final class Builder {
 	private String displayName;
 	private String printerName;
 	private int driver;
-	
+
 	private String codePage;
 
 	private String commonName;
-	
+
 	private String ipAddress;
-	
-	private long appID; 
-	
+
+	private long appID;
+
 	private String token;
-	
+
 	private int expMode;
 	private long exp;
 	private long ts;
-	
+
 	private String authUrl = AUTH_URL;
-	private String loginUrl = LOGIN_URL_1;
 	
 	/**
-	 * Get builder instance with targeted browser fingerprint
-	 * Use this when URL protection sharing is enabled
+	 * Get builder instance with targeted browser fingerprint Use this when URL
+	 * protection sharing is enabled
+	 * 
 	 * @param url
 	 * @param fingerprint
 	 * @return
@@ -108,8 +109,8 @@ public final class Builder {
 	}
 
 	/**
-	 * Get builder instance.
-	 * Do not use this if URL protection sharing is used 
+	 * Get builder instance. Do not use this if URL protection sharing is used
+	 * 
 	 * @param url
 	 * @return
 	 */
@@ -119,6 +120,7 @@ public final class Builder {
 
 	/**
 	 * Builder constructor
+	 * 
 	 * @param url
 	 * @param fingerprint
 	 */
@@ -132,6 +134,7 @@ public final class Builder {
 
 	/**
 	 * Set access UUID
+	 * 
 	 * @param uuid
 	 * @return
 	 */
@@ -142,6 +145,7 @@ public final class Builder {
 
 	/**
 	 * Set access virtual host name
+	 * 
 	 * @param host
 	 * @return
 	 */
@@ -152,6 +156,7 @@ public final class Builder {
 
 	/**
 	 * Set remote system username
+	 * 
 	 * @param user
 	 * @return
 	 */
@@ -162,6 +167,7 @@ public final class Builder {
 
 	/**
 	 * Set remote system password
+	 * 
 	 * @param password
 	 * @return
 	 */
@@ -212,6 +218,7 @@ public final class Builder {
 
 	/**
 	 * Set client IP address
+	 * 
 	 * @param ipAddress
 	 * @return
 	 */
@@ -222,6 +229,7 @@ public final class Builder {
 
 	/**
 	 * Set Mobile application access token
+	 * 
 	 * @param token
 	 * @return
 	 */
@@ -231,9 +239,9 @@ public final class Builder {
 	}
 
 	/**
-	 * Determine what server will do if auto-login token is expired
-	 * In felxible mode, it will show signon screen
-	 * In strict mode, it will disconnect sessio
+	 * Determine what server will do if auto-login token is expired In felxible
+	 * mode, it will show signon screen In strict mode, it will disconnect sessio
+	 * 
 	 * @param mode
 	 * @return
 	 */
@@ -241,65 +249,67 @@ public final class Builder {
 		this.expMode = mode.ordinal();
 		return this;
 	}
-	
+
 	/**
 	 * Set encrypted url expiration in seconds.
+	 * 
 	 * @param value
 	 * @param unit
 	 * @return
 	 */
 	public Builder setExpiration(final long value, final TimeUnit unit) {
-		
+
 		if (value == 0) {
-			this.exp = 0;	
+			this.exp = 0;
 		} else {
 			this.exp = unit.toMillis(value);
 		}
 		return this;
 	}
-	
+
 	/**
-	 * Get url encrypted expiration fixed to server time 
+	 * Get url encrypted expiration fixed to server time
+	 * 
 	 * @return
 	 */
 	private long getExpiration() {
-		 return exp + ts;
+		return exp + ts;
 	}
-	
+
 	private Builder setTimestamp(final long timestamp) {
 
 		long diff = System.currentTimeMillis() - timestamp;
-		
+
 		if (diff < 0) {
 			ts = System.currentTimeMillis() - diff;
 		} else {
 			ts = System.currentTimeMillis() + diff;
 		}
-		
+
 		return this;
 	}
 
 	private int getOtpToken() {
 		int token = 0;
-		if (otpKey != null && otpKey.trim().length()>0) {
+		if (otpKey != null && otpKey.trim().length() > 0) {
 			try {
 				final TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
 
-				final byte [] data = new Base32().decode(otpKey);
-		  	    final Key key = new SecretKeySpec(data, totp.getAlgorithm());
-				    
+				final byte[] data = new Base32().decode(otpKey);
+				final Key key = new SecretKeySpec(data, totp.getAlgorithm());
+
 				final Instant now = Instant.now();
 				token = totp.generateOneTimePassword(key, now);
-				
+
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 		return token;
 	}
-		
+
 	private TnLogin getLogin() {
-		
+
 		final int otpToken = getOtpToken();
 		final TnLogin login = new TnLogin();
 		login.setKey(apiKey);
@@ -315,121 +325,135 @@ public final class Builder {
 		login.setMenu(menu);
 		login.setPassword(password);
 		login.setPrinterName(printerName);
-		login.setProgram(program);		
+		login.setProgram(program);
 		login.setToken(token);
 		login.setUser(user);
-		login.setUuid(uuid);		
+		login.setUuid(uuid);
 		login.setTs(ts);
 		login.setExp(getExpiration());
-		//login.setTs(getExpiration());
+		// login.setTs(getExpiration());
 		login.setExpMode(expMode);
-		
+
 		return login;
 	}
-	
-	/* Java 17 Http client; no need for apache http lib.
-	public URI build2() throws Exception {
 
-		 final SSLContext sslContext = new SSLContextBuilder()  
-	                .loadTrustMaterial(null, new TrustStrategy() {						
-						public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-							return true;
-						}
-					})
-	                .build(); 
-		 
-		 
-		final HttpClient httpClient = HttpClient.newBuilder()
-	            .version(HttpClient.Version.HTTP_1_1)
-	            .connectTimeout(Duration.ofSeconds(10))
-	            .sslContext(sslContext)
-	            .build();
-	    
-        final HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(url + authUrl))
-                .setHeader("User-Agent", "Green Screens Client") 
-                .build();
-
-        final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
-        final String data = response.body();
-        
-        return dataToUri(data);
-	}
+	/**
+	 * Returns server authorization info
+	 * @return
+	 * @throws Exception
 	 */
-	
+	private String getServerData() throws Exception {
+
+		final HttpGet httpGet = new HttpGet(url + authUrl);
+
+		final CloseableHttpResponse response = Builder.noSslHttpClient().execute(httpGet);
+		final AuthResponse authResp = new AuthResponse(response);
+		final String data = authResp.returnContent().asString();
+
+		authResp.discardContent();
+		return data;
+	}
+
+	/*
+	 * Java 17 Http client; no need for apache http lib. public URI build2() throws
+	 * Exception {
+	 * 
+	 * final SSLContext sslContext = new SSLContextBuilder()
+	 * .loadTrustMaterial(null, new TrustStrategy() { public boolean
+	 * isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+	 * return true; } }) .build();
+	 * 
+	 * 
+	 * final HttpClient httpClient = HttpClient.newBuilder()
+	 * .version(HttpClient.Version.HTTP_1_1) .connectTimeout(Duration.ofSeconds(10))
+	 * .sslContext(sslContext) .build();
+	 * 
+	 * final HttpRequest request = HttpRequest.newBuilder() .GET()
+	 * .uri(URI.create(url + authUrl)) .setHeader("User-Agent",
+	 * "Green Screens Client") .build();
+	 * 
+	 * final HttpResponse<String> response = httpClient.send(request,
+	 * HttpResponse.BodyHandlers.ofString());
+	 * 
+	 * final String data = response.body();
+	 * 
+	 * return dataToUri(data); }
+	 */
+
+	/**
+	 * Generate JSON object from builder. Used for testing / debugging
+	 * @return
+	 * @throws Exception
+	 */
+	public String toJSON() throws Exception {
+
+		final String data = getServerData();
+		final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
+
+		setTimestamp(auth.getTs());
+		final TnLogin login = getLogin();
+
+		return JsonUtil.stringify(login);
+	}
+
 	/**
 	 * Generate access URL
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	public URI build() throws Exception {
-		
-		final HttpGet httpGet = new HttpGet(url + authUrl);
-		
-		final CloseableHttpResponse response = noSslHttpClient().execute(httpGet);
-		final AuthResponse authResp = new AuthResponse(response);
-		final String data = authResp.returnContent().asString();
-		
-        authResp.discardContent();
-		
+		final String data = getServerData();
 		return dataToUri(data);
 	}
-	
+
 	public URI dataToUri(final String data) throws Exception {
-		
-        final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
+
+		final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
 		final Aes aesCrypt = Aes.get();
-		final PublicKey pk  = RsaUtil.getPublicKey(auth.getKey());	
-		
+		final PublicKey pk = RsaUtil.getPublicKey(auth.getKey());
+
 		setTimestamp(auth.getTs());
 		final TnLogin login = getLogin();
-		
+
 		final String json = JsonUtil.stringify(login);
 		final String aesJson = aesCrypt.encrypt(json);
 		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk);
 		final String v = Integer.toString(Long.toString(appID).hashCode());
-		
-		final String service = auth.getBuild() >= 20220725 ? LOGIN_URL_2 : LOGIN_URL_1;  
-		
-		return new URIBuilder(url +  service)
-				.setParameter("d", aesJson)
-				.setParameter("k", enc)
-				.setParameter("v", v)
+
+		final String service = auth.getBuild() >= 20220725 ? LOGIN_URL_2 : LOGIN_URL_1;
+
+		return new URIBuilder(url + service).setParameter("d", aesJson).setParameter("k", enc).setParameter("v", v)
 				.build();
 	}
-	
+
 	/**
-	 * HTTP Client with support for SSL
-	 * NOTE - for TLS 1.3 Java 12+ is required 
+	 * HTTP Client with support for SSL NOTE - for TLS 1.3 Java 12+ is required
+	 * 
 	 * @return
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
 	 * @throws KeyStoreException
 	 */
-	 private static CloseableHttpClient noSslHttpClient() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {  
-	 		 
-		 final SSLContext sslContext = new SSLContextBuilder()  
-	                .loadTrustMaterial(null, new TrustStrategy() {						
-						public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-							return true;
-						}
-					}).build();  
-	     
-		 final String[] versions = new String[]{"TLSv1.2", "TLSv1.3"};
-		 
-		 final SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, versions , null, NoopHostnameVerifier.INSTANCE);
-		 
-	      final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(  
-                  RegistryBuilder.<ConnectionSocketFactory>create()  
-                  .register("http", PlainConnectionSocketFactory.INSTANCE)  
-                  .register("https", factory)  
-                  .build()  
-                  );
-          
-	      return HttpClients.custom().setSSLSocketFactory(factory).setConnectionManager(manager).build();
-	 }  
-	
-}
+	private static CloseableHttpClient noSslHttpClient()
+			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
+		final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+			public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+				return true;
+			}
+		}).build();
+
+		final String[] versions = new String[] { "TLSv1.2", "TLSv1.3" };
+
+		final SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, versions, null,
+				NoopHostnameVerifier.INSTANCE);
+
+		final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
+				RegistryBuilder.<ConnectionSocketFactory>create()
+						.register("http", PlainConnectionSocketFactory.INSTANCE).register("https", factory).build());
+
+		return HttpClients.custom().setSSLSocketFactory(factory).setConnectionManager(manager).build();
+	}
+
+}

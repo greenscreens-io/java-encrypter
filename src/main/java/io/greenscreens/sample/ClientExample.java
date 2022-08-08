@@ -38,6 +38,8 @@ public class ClientExample {
 		// If FLEXIBLE - don't close connection - show sigon 
 		builder.setExpirationMode(ExpirationMode.FLEXIBLE);
 
+		System.out.println(builder.toJSON());
+
 		URI uri = builder.build();
 		System.out.println(uri.toString());
 	}
