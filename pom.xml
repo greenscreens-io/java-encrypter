@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.greenscreens</groupId>
   <artifactId>io.greenscreens.client</artifactId>
-  <version>1.1.1</version>
+  <version>1.1.0</version>
 
   <organization>
   	<url>www.greenscreens.io</url>
@@ -28,38 +28,9 @@
 		<maven.war.version>3.3.1</maven.war.version>
 		<maven.proguard.version>2.5.1</maven.proguard.version>
 		<maven.test.version>3.0.0-M5</maven.test.version>
-		<jackson.version>2.13.3</jackson.version>
-		<bcastle.version>1.69</bcastle.version>
+		<jackson.version>2.13.4</jackson.version>
+		<bcastle.version>1.70</bcastle.version>
 	</properties>
-	
-    <licenses>
-        <license>
-            <name>MIT</name>
-            <url>https://github.com/greenscreens-io/java-encrypter/blob/master/LICENSE</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:greenscreens-io/quark-java.git</connection>
-        <developerConnection>scm:git:git@github.com:greenscreens-io/java-encrypter.git</developerConnection>
-        <url>https://github.com/greenscreens-io/java-encrypter</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <issueManagement>
-        <system>Github</system>
-        <url>https://github.com/greenscreens-io/java-encrypter/issues</url>
-    </issueManagement>
-
-    <distributionManagement>
-       <repository>
-         <id>github</id>
-         <name>GitHub greenscreens-io Apache Maven Packages</name>
-         <url>https://maven.pkg.github.com/greenscreens-io/java-encrypter</url>
-       </repository>
-    </distributionManagement>
-	
   <dependencies>
   
 		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
@@ -107,27 +78,36 @@
 		    <version>3.12.0</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/fluent-hc -->
+		 
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>fluent-hc</artifactId>
 		    <version>4.5.13</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpcore</artifactId>
 		    <version>4.4.15</version>
 		</dependency>
-		
-		
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>
 		    <version>4.5.13</version>
 		</dependency>
+		
+
+		<!--
+		<dependency>
+		    <groupId>org.apache.httpcomponents.client5</groupId>
+		    <artifactId>httpclient5-fluent</artifactId>
+		    <version>5.2-beta1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents.client5</groupId>
+		    <artifactId>httpclient5</artifactId>
+		    <version>5.2-beta1</version>
+		</dependency>
+		-->
 
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -167,8 +147,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
+                <source>${maven.compiler.source}</source>
+                <target>${maven.compiler.target}</target>
         </configuration>
      </plugin>
 
