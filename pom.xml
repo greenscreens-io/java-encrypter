@@ -29,7 +29,7 @@
 		<maven.war.version>3.3.1</maven.war.version>
 		<maven.proguard.version>2.5.1</maven.proguard.version>
 		<maven.test.version>3.0.0-M5</maven.test.version>
-		<jackson.version>2.13.4</jackson.version>
+		<jackson.version>2.13.4.1</jackson.version>
 		<bcastle.version>1.70</bcastle.version>
 		<slf4j.version>1.7.36</slf4j.version>		
 	</properties>
