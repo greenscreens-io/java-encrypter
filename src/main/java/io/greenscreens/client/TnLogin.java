@@ -3,6 +3,8 @@
  */
 package io.greenscreens.client;
 
+import java.util.Objects;
+
 /**
  * Web Terminal login data.
  * Mandatory values are UUID and HOST.
@@ -108,6 +110,7 @@ class TnLogin {
 	}
 	
 	public void setUser(String user) {
+		if (Objects.nonNull(user) && user.startsWith("*")) throw new RuntimeException("User name cant start with a '*' character!");
 		this.user = user;
 	}
 	

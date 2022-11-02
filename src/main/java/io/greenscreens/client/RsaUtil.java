@@ -3,13 +3,22 @@
  */
 package io.greenscreens.client;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
+import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource.PSpecified;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +34,10 @@ enum RsaUtil {
 	private static Log LOG = LogFactory.getLog(RsaUtil.class);
 	
 	private static final String RSA_MODE = "RSA/ECB/PKCS1Padding";
-	
+	private static final String WEB_MODE = "RSA/NONE/OAEPWithSHA256AndMGF1Padding";
+	private static final String WEB_MODE_JCA = "RSA/NONE/OAEPWithSHA-256AndMGF1Padding";
+	private static final OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSpecified.DEFAULT);
+
 	/**
 	 * Get RSA factory instance
 	 * @return
@@ -76,9 +88,16 @@ enum RsaUtil {
 	 * @param data
 	 * @param key
 	 * @return
+	 * @throws NoSuchProviderException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
 	 */
-	public static String encrypt(final byte[] data, final PublicKey key) {
-    	final byte [] enc = encryptData(data, key);
+	public static String encrypt(final byte[] data, final PublicKey key, final boolean modern) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, BadPaddingException {
+    	final byte [] enc = encryptData(data, key, modern);
     	return Base64.encodeBase64String(enc);		
 	}
     
@@ -87,24 +106,39 @@ enum RsaUtil {
      * @param Buffer
      * @param key
      * @return
+     * @throws NoSuchProviderException 
+     * @throws InvalidAlgorithmParameterException 
+     * @throws NoSuchPaddingException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
+     * @throws BadPaddingException 
+     * @throws IllegalBlockSizeException 
      */
-	private static byte[] encryptData(final byte[] data, final PublicKey key) {
-		
-		byte[] result = null;
-		
-	    try {
-	    	
-	    	final Cipher rsa = Cipher.getInstance(RSA_MODE);
-	        rsa.init(Cipher.ENCRYPT_MODE, key);
-	        result = rsa.doFinal(data);
-	        
-	    } catch (Exception e) {
-	    	result = new byte [0];
-	    	LOG.error(e.getMessage());
-	    	LOG.debug(e.getMessage(), e);
-	    }
-	    
-	    return result;
+	private static byte[] encryptData(final byte[] data, final PublicKey key, final boolean modern) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, BadPaddingException {
+		final Cipher cipher = getCipher(modern, key, Cipher.ENCRYPT_MODE);
+		return cipher.doFinal(data);
+	}
+	
+	private static Cipher getCipher(final boolean modern, final Key key, final int mode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException  {
+
+		Cipher cipher = null;
+		SecurityProvider.get();
+		if (modern) {
+			try {
+				cipher = Cipher.getInstance(WEB_MODE, SecurityProvider.PROVIDER_NAME);
+			} catch (Exception e) {
+				final String msg = Utils.toMessage(e);
+				LOG.error(msg);
+				LOG.debug(msg, e);
+				cipher = Cipher.getInstance(WEB_MODE_JCA, SecurityProvider.PROVIDER_NAME);
+			}
+			cipher.init(mode, key, oaepParams);
+		} else {
+			cipher = Cipher.getInstance(RSA_MODE);
+			cipher.init(mode, key);
+		}
+
+		return cipher;
 	}
 
 }

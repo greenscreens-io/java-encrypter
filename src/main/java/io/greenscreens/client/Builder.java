@@ -344,8 +344,11 @@ public final class Builder {
 	 */
 	private String getServerData() throws Exception {
 
-		final HttpGet httpGet = new HttpGet(url + authUrl);
+		final URIBuilder builder = new URIBuilder(url + authUrl);
+		builder.setParameter("modern", isModern() ? "1" : "0");
 
+		final HttpGet httpGet = new HttpGet(builder.build());
+	
 		final CloseableHttpResponse response = Builder.noSslHttpClient().execute(httpGet);
 		final AuthResponse authResp = new AuthResponse(response);
 		final String data = authResp.returnContent().asString();
@@ -418,15 +421,28 @@ public final class Builder {
 
 		final String json = JsonUtil.stringify(login);
 		final String aesJson = aesCrypt.encrypt(json);
-		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk);
+		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk, isModern());
 		final String v = Integer.toString(Long.toString(appID).hashCode());
 
 		final String service = auth.getBuild() >= 20220725 ? LOGIN_URL_2 : LOGIN_URL_1;
 
-		return new URIBuilder(url + service).setParameter("d", aesJson).setParameter("k", enc).setParameter("v", v)
-				.build();
+		final URIBuilder builder = new URIBuilder(url + service).setParameter("d", aesJson).setParameter("k", enc).setParameter("v", v);
+		
+		if (auth.getVer() > 5 || isModern()) {
+			builder.setParameter("t", "1");
+		}
+		
+		return builder.build();
 	}
 
+	/**
+	 * Check if modern browser encryption used or legacy 
+	 * @return
+	 */
+	private boolean isModern() {
+		return url.startsWith("https");
+	}
+	
 	/**
 	 * HTTP Client with support for SSL NOTE - for TLS 1.3 Java 12+ is required
 	 * 
@@ -444,7 +460,9 @@ public final class Builder {
 			}
 		}).build();
 
-		final String[] versions = new String[] { "TLSv1.2", "TLSv1.3" };
+		// Java 11 or newer supports TLSv1.3
+		final int ver = Utils.getVersion();
+		final String[] versions = ver > 11 ? new String[] { "TLSv1.2", "TLSv1.3" } :new String[] { "TLSv1.2"};
 
 		final SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, versions, null,
 				NoopHostnameVerifier.INSTANCE);
@@ -455,5 +473,6 @@ public final class Builder {
 
 		return HttpClients.custom().setSSLSocketFactory(factory).setConnectionManager(manager).build();
 	}
+
 
 }

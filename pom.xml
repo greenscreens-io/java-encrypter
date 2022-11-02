@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.greenscreens</groupId>
   <artifactId>io.greenscreens.client</artifactId>
-  <version>1.1.2</version>
+  <version>1.2.0</version>
 
   <organization>
   	<url>www.greenscreens.io</url>
@@ -14,7 +14,8 @@
   
   	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-		<maven.build.release>5.0.0.</maven.build.release>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<maven.build.release>6.0.0.</maven.build.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.jupiter.version>5.7.0</junit.jupiter.version>
 		<junit.platform.version>1.7.0</junit.platform.version>
@@ -30,6 +31,7 @@
 		<maven.test.version>3.0.0-M5</maven.test.version>
 		<jackson.version>2.13.4</jackson.version>
 		<bcastle.version>1.70</bcastle.version>
+		<slf4j.version>1.7.36</slf4j.version>		
 	</properties>
   <dependencies>
   
@@ -48,19 +50,33 @@
 		    <version>0.3.1</version>
 		</dependency>
 		
-  
-		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
 		<dependency>
-		    <groupId>commons-logging</groupId>
-		    <artifactId>commons-logging</artifactId>
-		    <version>1.2</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>	
+		
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>${bcastle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>${bcastle.version}</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-text</artifactId>
-		    <version>1.10.0</version>
+		    <version>1.9</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
@@ -124,7 +140,6 @@
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
   </dependencies>
 
     <build>
