@@ -1,31 +1,32 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2023 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Objects;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AES encryption class
  */
 final class Aes {
 
-	private static Log LOG = LogFactory.getLog(Aes.class);
+	private static Logger LOG = LoggerFactory.getLogger(Aes.class);
 	
 	final private static Charset UTF8 = StandardCharsets.UTF_8;
 	
@@ -47,25 +48,48 @@ final class Aes {
 	/**
 	 * AES instance factory
 	 * @return
+	 * @throws IOException 
 	 */
-	public static Aes get() {
+	public static Aes get() throws IOException {
 		Aes crypt = new Aes();
 		return crypt;
 	}
 
 	/**
 	 * AES constructor
+	 * @throws IOException 
 	 */
-	public Aes() {
-		super();
-		
+	public Aes() throws IOException {
+		super();		
 		final String k = getRandomString(16);
 		final String i = getRandomString(16);
-		
-		keyspec = new SecretKeySpec(k.getBytes(), "AES");
-		ivspec = new IvParameterSpec(i.getBytes());
+		init(k.getBytes(), i.getBytes());
 	}
 
+	public Aes(final byte[] data) throws IOException {
+		validate(data, 32);
+		final byte[] aesKey = Arrays.copyOfRange(data, 0, 16);
+		final byte[] aesIV = Arrays.copyOfRange(data, 16, 32);
+		init(aesKey, aesIV);
+	}
+	
+	public Aes(final byte[] key, final byte[] iv) throws IOException {
+		init(key, iv);
+	}
+	
+	private void init(final byte[] key, final byte[] iv) throws IOException {
+		validate(key, 16);
+		validate(iv, 16);
+		keyspec = new SecretKeySpec(key, "AES");
+		ivspec = new IvParameterSpec(iv);				
+	}
+
+	private void validate(final byte[] data, final int len) throws IOException {
+		if (Objects.isNull(data) || data.length != len) {
+			throw new IOException("Invalid AES encryption key!");
+		}				
+	}
+	
 	/**
 	 * Create AES IV-KEY byte array
 	 * @return

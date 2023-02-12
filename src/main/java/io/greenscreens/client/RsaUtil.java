@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2023 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -22,8 +22,9 @@ import javax.crypto.spec.PSource.PSpecified;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * RSA utility to work with public RSA key
@@ -31,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 enum RsaUtil {
 	;
 
-	private static Log LOG = LogFactory.getLog(RsaUtil.class);
+	private static Logger LOG = LoggerFactory.getLogger(RsaUtil.class);
 	
 	private static final String RSA_MODE = "RSA/ECB/PKCS1Padding";
 	private static final String WEB_MODE = "RSA/NONE/OAEPWithSHA256AndMGF1Padding";
@@ -119,18 +120,30 @@ enum RsaUtil {
 		return cipher.doFinal(data);
 	}
 	
+	/**
+	 * Get proper cipher engine
+	 * @param modern
+	 * @param key
+	 * @param mode
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws NoSuchProviderException
+	 */
 	private static Cipher getCipher(final boolean modern, final Key key, final int mode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException  {
 
 		Cipher cipher = null;
 		SecurityProvider.get();
 		if (modern) {
 			try {
-				cipher = Cipher.getInstance(WEB_MODE, SecurityProvider.PROVIDER_NAME);
+				cipher = Cipher.getInstance(WEB_MODE, SecurityProvider.provider());
 			} catch (Exception e) {
 				final String msg = Utils.toMessage(e);
 				LOG.error(msg);
 				LOG.debug(msg, e);
-				cipher = Cipher.getInstance(WEB_MODE_JCA, SecurityProvider.PROVIDER_NAME);
+				cipher = Cipher.getInstance(WEB_MODE_JCA, SecurityProvider.provider());
 			}
 			cipher.init(mode, key, oaepParams);
 		} else {

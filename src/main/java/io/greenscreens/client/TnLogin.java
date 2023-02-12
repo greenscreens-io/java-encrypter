@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2023 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Web Terminal login data.
@@ -250,5 +252,9 @@ class TnLogin {
 		this.otp = otp;
 	}
 	
+	@JsonIgnore
+	public String toJson() throws Exception {
+		return JsonUtil.stringify(this);
+	}
 	
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2023 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.net.URI;
 import java.security.Key;
 import java.security.KeyManagementException;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -411,16 +412,53 @@ public final class Builder {
 	}
 
 	public URI dataToUri(final String data) throws Exception {
-
 		final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
+		return auth.getVer() > 5  ? dataToUriECDH(auth) : dataToUriRSA(auth);
+	}
+
+	/**
+	 * Create encrypted URI for GSv6 or newer versions
+	 * @param auth
+	 * @return
+	 * @throws Exception
+	 */
+	private URI dataToUriECDH(final TnAuth auth) throws Exception {
+		
+		final KeyPair keyPair = SharedSecret.newKeyPair();	
+		final Aes aes = SharedSecret.generateShared(auth.getKey(), keyPair.getPrivate());
+		
+		setTimestamp(auth.getTs());
+		final TnLogin login = getLogin();
+
+		final String key = SharedSecret.flatten(keyPair);
+		final String data = aes.encrypt(login.toJson());
+		
+		final String v = Integer.toString(Long.toString(appID).hashCode());
+
+		final URIBuilder builder = new URIBuilder(url + LOGIN_URL_2)
+				.setParameter("d", data)
+				.setParameter("k", key)
+				.setParameter("v", v)
+				.setParameter("t", "1");
+		
+		return builder.build();
+	}
+
+	/**
+	 * Create encrypted URI for GSv5 or older versions
+	 * @param auth
+	 * @return
+	 * @throws Exception
+	 */
+	private URI dataToUriRSA(final TnAuth auth) throws Exception {
+
 		final Aes aesCrypt = Aes.get();
 		final PublicKey pk = RsaUtil.getPublicKey(auth.getKey());
 
 		setTimestamp(auth.getTs());
 		final TnLogin login = getLogin();
 
-		final String json = JsonUtil.stringify(login);
-		final String aesJson = aesCrypt.encrypt(json);
+		final String aesJson = aesCrypt.encrypt(login.toJson());
 		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk, isModern());
 		final String v = Integer.toString(Long.toString(appID).hashCode());
 
@@ -434,7 +472,7 @@ public final class Builder {
 		
 		return builder.build();
 	}
-
+	
 	/**
 	 * Check if modern browser encryption used or legacy 
 	 * @return

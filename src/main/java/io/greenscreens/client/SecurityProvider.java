@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016  Green Screens Ltd.
+ * Copyright (C) 2015, 2023 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -9,10 +9,13 @@ import java.util.Objects;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+/**
+ * Initialize BouncyCastle library
+ */
 public enum SecurityProvider {
 	;
 
-	public static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
+	private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
 	
 	private static Provider provider;
 
@@ -23,6 +26,10 @@ public enum SecurityProvider {
 	public static void initialize() {
 		if (Objects.nonNull(provider)) return;
 		provider = getProvider();
+	}
+
+	public static String provider() {
+		return BouncyCastleProvider.PROVIDER_NAME;
 	}
 	
 	private static Provider getProvider() {

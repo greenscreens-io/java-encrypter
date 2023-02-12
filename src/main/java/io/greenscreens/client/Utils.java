@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2022 Green Screens Ltd.
+ * Copyright (C) 2015 - 2023 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -18,7 +18,7 @@ public enum Utils {
 	 * @return
 	 */
 	public static int getVersion() {
-	    String version = System.getProperty("java.version");
+	    String version = normalize(System.getProperty("java.version"));
 	    if(version.startsWith("1.")) {
 	        version = version.substring(2, 3);
 	    } else {
@@ -34,9 +34,15 @@ public enum Utils {
 	 * @return
 	 */
 	public static String toMessage(final Throwable e) {
-		return toMessage(e, e == null ? "" : e.toString());
+		return toMessage(e, Objects.isNull(e) ? "" : e.toString());
 	}
 
+	/**
+	 * Convert Exception into a String message
+	 * @param e
+	 * @param def
+	 * @return
+	 */
 	public static String toMessage(final Throwable e, final String def) {
 
 		String err = normalize(def);
@@ -84,7 +90,7 @@ public enum Utils {
 	 */
 	public static String normalize(final String data, final String def) {
 
-		if (data == null || data.length() == 0) {
+		if (Objects.isNull(data) || data.length() == 0) {
 			return def;
 		}
 
