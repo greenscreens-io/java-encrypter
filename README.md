@@ -24,4 +24,4 @@ To request access URL from Java Servlet (fingerprint is optional and depends on 
     http://localhost:9080/ServletExample?fp=12342343   
  
 ----------
-&copy; Green Screens Ltd. 2015. - 2022.
+&copy; Green Screens Ltd. 2015. - 2024.
