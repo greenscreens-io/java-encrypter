@@ -13,8 +13,8 @@ org-apache-commons-commons-text = "1.14.0"
 org-apache-httpcomponents-fluent-hc = "4.5.14"
 org-apache-httpcomponents-httpclient = "4.5.14"
 org-apache-httpcomponents-httpcore = "4.4.16"
-org-bouncycastle-bcpkix-jdk15on = "1.82"
-org-bouncycastle-bcprov-jdk15on = "1.82"
+org-bouncycastle-bcpkix-jdk18on = "1.82"
+org-bouncycastle-bcprov-jdk18on = "1.82"
 org-slf4j-slf4j-api = "1.7.36"
 org-slf4j-slf4j-simple = "1.7.36"
 
@@ -30,7 +30,7 @@ org-apache-commons-commons-text = { module = "org.apache.commons:commons-text", 
 org-apache-httpcomponents-fluent-hc = { module = "org.apache.httpcomponents:fluent-hc", version.ref = "org-apache-httpcomponents-fluent-hc" }
 org-apache-httpcomponents-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "org-apache-httpcomponents-httpclient" }
 org-apache-httpcomponents-httpcore = { module = "org.apache.httpcomponents:httpcore", version.ref = "org-apache-httpcomponents-httpcore" }
-org-bouncycastle-bcpkix-jdk15on = { module = "org.bouncycastle:bcpkix-jdk15on", version.ref = "org-bouncycastle-bcpkix-jdk15on" }
-org-bouncycastle-bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version.ref = "org-bouncycastle-bcprov-jdk15on" }
+org-bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "org-bouncycastle-bcpkix-jdk18on" }
+org-bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "org-bouncycastle-bcprov-jdk18on" }
 org-slf4j-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "org-slf4j-slf4j-api" }
 org-slf4j-slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "org-slf4j-slf4j-simple" }

@@ -20,8 +20,8 @@ dependencies {
     api libs.com.eatthepath.java.otp
     api libs.org.slf4j.slf4j.api
     api libs.org.slf4j.slf4j.simple
-    api libs.org.bouncycastle.bcprov.jdk15on
-    api libs.org.bouncycastle.bcpkix.jdk15on
+    api libs.org.bouncycastle.bcprov.jdk18on
+    api libs.org.bouncycastle.bcpkix.jdk18on
     api libs.org.apache.commons.commons.text
     api libs.commons.codec.commons.codec
     api libs.org.apache.commons.commons.lang3
