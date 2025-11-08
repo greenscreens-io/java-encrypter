@@ -24,7 +24,7 @@ class TnAuth {
 		return ts;
 	}
 	
-	public void setTs(long ts) {
+	public void setTs(final long ts) {
 		this.ts = ts;
 	}
 	
@@ -32,7 +32,7 @@ class TnAuth {
 		return ver;
 	}
 	
-	public void setVer(int ver) {
+	public void setVer(final int ver) {
 		this.ver = ver;
 	}
 	
@@ -40,7 +40,7 @@ class TnAuth {
 		return key;
 	}
 	
-	public void setKey(String key) {
+	public void setKey(final String key) {
 		this.key = key;
 	}
 	
@@ -48,7 +48,7 @@ class TnAuth {
 		return ip;
 	}
 	
-	public void setIp(String ip) {
+	public void setIp(final String ip) {
 		this.ip = ip;
 	}
 
@@ -56,7 +56,7 @@ class TnAuth {
 		return version;
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(final String version) {
 		this.version = version;
 	}
 
@@ -64,7 +64,7 @@ class TnAuth {
 		return build;
 	}
 
-	public void setBuild(int build) {
+	public void setBuild(final int build) {
 		this.build = build;
 	}
 

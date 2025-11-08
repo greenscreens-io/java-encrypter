@@ -4,7 +4,6 @@
 package org.apache.http.client.fluent;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Response;
 
 /**
  * Helper apache http client fluent API

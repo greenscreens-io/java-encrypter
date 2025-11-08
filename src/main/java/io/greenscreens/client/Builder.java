@@ -240,8 +240,8 @@ public final class Builder {
 	}
 
 	/**
-	 * Determine what server will do if auto-login token is expired In felxible
-	 * mode, it will show signon screen In strict mode, it will disconnect sessio
+	 * Determine what server will do if auto-login token is expired In flexible
+	 * mode, it will show sign-on screen In strict mode, it will disconnect session
 	 * 
 	 * @param mode
 	 * @return
@@ -252,7 +252,7 @@ public final class Builder {
 	}
 
 	/**
-	 * Set encrypted url expiration in seconds.
+	 * Set encrypted URL expiration in seconds.
 	 * 
 	 * @param value
 	 * @param unit
@@ -332,7 +332,6 @@ public final class Builder {
 		login.setUuid(uuid);
 		login.setTs(ts);
 		login.setExp(getExpiration());
-		// login.setTs(getExpiration());
 		login.setExpMode(expMode);
 
 		return login;
@@ -353,7 +352,6 @@ public final class Builder {
 		final CloseableHttpResponse response = Builder.noSslHttpClient().execute(httpGet);
 		final AuthResponse authResp = new AuthResponse(response);
 		final String data = authResp.returnContent().asString();
-
 		authResp.discardContent();
 		return data;
 	}

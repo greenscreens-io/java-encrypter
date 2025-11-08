@@ -75,20 +75,20 @@ class TnLogin {
 	 * Used with bypass signon feature
 	 * If username and password are set, this should be set also
 	 */
-	private long ts;
+	private long ts = 0;
 
 	/**
 	 * Expiration timestamp
 	 * After given time, encrypted URL will not be valid any more
 	 */
-	private long exp;
+	private long exp = 0;
 	
 	/**
 	 * Expiration mode determine what happens link is expired
 	 * 0 - strict mode - disconnect session
-	 * 0 - flex   mode - shows signon  
+	 * 1 - flexible mode - shows sign-on  
 	 */
-	private int expMode;
+	private int expMode = 0;
 	
 	
 	public String getUuid() {
@@ -111,7 +111,7 @@ class TnLogin {
 		return user;
 	}
 	
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		if (Objects.nonNull(user) && user.startsWith("*")) throw new RuntimeException("User name cant start with a '*' character!");
 		this.user = user;
 	}
@@ -120,7 +120,7 @@ class TnLogin {
 		return password;
 	}
 	
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 	
@@ -128,7 +128,7 @@ class TnLogin {
 		return program;
 	}
 	
-	public void setProgram(String program) {
+	public void setProgram(final String program) {
 		this.program = program;
 	}
 	
@@ -136,7 +136,7 @@ class TnLogin {
 		return menu;
 	}
 	
-	public void setMenu(String menu) {
+	public void setMenu(final String menu) {
 		this.menu = menu;
 	}
 	
@@ -144,7 +144,7 @@ class TnLogin {
 		return lib;
 	}
 	
-	public void setLib(String lib) {
+	public void setLib(final String lib) {
 		this.lib = lib;
 	}
 	
@@ -152,7 +152,7 @@ class TnLogin {
 		return displayName;
 	}
 	
-	public void setDisplayName(String displayName) {
+	public void setDisplayName(final String displayName) {
 		this.displayName = displayName;
 	}
 	
@@ -160,7 +160,7 @@ class TnLogin {
 		return printerName;
 	}
 	
-	public void setPrinterName(String printerName) {
+	public void setPrinterName(final String printerName) {
 		this.printerName = printerName;
 	}
 	
@@ -168,7 +168,7 @@ class TnLogin {
 		return driver;
 	}
 	
-	public void setDriver(int driver) {
+	public void setDriver(final int driver) {
 		this.driver = driver;
 	}
 	
@@ -176,7 +176,7 @@ class TnLogin {
 		return codePage;
 	}
 	
-	public void setCodePage(String codePage) {
+	public void setCodePage(final String codePage) {
 		this.codePage = codePage;
 	}
 	
@@ -184,7 +184,7 @@ class TnLogin {
 		return commonName;
 	}
 	
-	public void setCommonName(String commonName) {
+	public void setCommonName(final String commonName) {
 		this.commonName = commonName;
 	}
 	
@@ -192,7 +192,7 @@ class TnLogin {
 		return ipAddress;
 	}
 	
-	public void setIpAddress(String ipAddress) {
+	public void setIpAddress(final String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
 	
@@ -200,7 +200,7 @@ class TnLogin {
 		return appID;
 	}
 	
-	public void setAppID(long appID) {
+	public void setAppID(final long appID) {
 		this.appID = appID;
 	}
 	
@@ -208,7 +208,7 @@ class TnLogin {
 		return token;
 	}
 	
-	public void setToken(String token) {
+	public void setToken(final String token) {
 		this.token = token;
 	}
 	
@@ -216,7 +216,7 @@ class TnLogin {
 		return ts;
 	}
 	
-	public void setTs(long ts) {
+	public void setTs(final long ts) {
 		this.ts = ts;
 	}
 
@@ -224,7 +224,7 @@ class TnLogin {
 		return exp;
 	}
 
-	public void setExp(long exp) {
+	public void setExp(final long exp) {
 		this.exp = exp;
 	}
 
@@ -232,7 +232,7 @@ class TnLogin {
 		return expMode;
 	}
 
-	public void setExpMode(int expMode) {
+	public void setExpMode(final int expMode) {
 		this.expMode = expMode;
 	}
 
@@ -240,7 +240,7 @@ class TnLogin {
 		return key;
 	}
 
-	public void setKey(String key) {
+	public void setKey(final String key) {
 		this.key = key;
 	}
 
@@ -248,7 +248,7 @@ class TnLogin {
 		return otp;
 	}
 
-	public void setOtp(int otp) {
+	public void setOtp(final int otp) {
 		this.otp = otp;
 	}
 	
