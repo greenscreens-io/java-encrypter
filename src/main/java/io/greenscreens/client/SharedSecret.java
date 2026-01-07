@@ -20,7 +20,6 @@ import java.util.Base64.Decoder;
 
 import javax.crypto.KeyAgreement;
 
-import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
@@ -67,12 +66,12 @@ enum SharedSecret {
 	 * @throws DecoderException 
 	 */
 	
-	public static Aes generateShared(final String data, final PrivateKey key) throws DecoderException, IOException{
+	public static Aes generateShared(final String data, final PrivateKey key) throws IOException{
 		final byte[] aesData = SharedSecret.generate(data, key);
 		return new Aes(aesData);
 	}
 	
-	public static byte[] generate(final String data, final PrivateKey key) throws DecoderException {
+	public static byte[] generate(final String data, final PrivateKey key) {
 		final Decoder base64 = Base64.getDecoder();
 		byte[] bin = base64.decode(data);
 		return generate(bin, key);

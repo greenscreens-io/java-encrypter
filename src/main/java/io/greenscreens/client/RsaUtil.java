@@ -12,6 +12,7 @@ import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -20,8 +21,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource.PSpecified;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,19 +57,20 @@ enum RsaUtil {
 	private static byte[] convertFromPEM(final byte[] raw) {
 		
 		String data = new String(raw);		
-		//final String [] lines = data.split("\\r?\\n");
+		final String [] lines = data.split("\r?\n");
 		
-		final String [] lines = StringUtils.splitPreserveAllTokens(data.trim(),"\n");
-		
+		String flat = null;
 		if (lines.length>1) {
 			lines[0] = "";
 			lines[lines.length-1] = "";
-			data = StringUtils.join(lines, "");			
+			flat = String.join("", lines);
+		} else {
+			flat = lines[0];
 		}
-		
-		return Base64.decodeBase64(data);
-	}
 
+		return Base64.getDecoder().decode(flat);
+	}
+	
 	/**
 	 * Convert PEm string format to PublicKey
 	 * @param key
@@ -99,7 +99,7 @@ enum RsaUtil {
 	 */
 	public static String encrypt(final byte[] data, final PublicKey key, final boolean modern) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, IllegalBlockSizeException, BadPaddingException {
     	final byte [] enc = encryptData(data, key, modern);
-    	return Base64.encodeBase64String(enc);		
+    	return Base64.getUrlEncoder().encodeToString(enc);		
 	}
     
     /**

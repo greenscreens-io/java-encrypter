@@ -16,8 +16,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +26,7 @@ final class Aes {
 
 	private static Logger LOG = LoggerFactory.getLogger(Aes.class);
 	
+	final private static byte[] ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".getBytes();
 	final private static Charset UTF8 = StandardCharsets.UTF_8;
 	
 	private static Cipher cipher;
@@ -61,9 +60,9 @@ final class Aes {
 	 */
 	public Aes() throws IOException {
 		super();		
-		final String k = getRandomString(16);
-		final String i = getRandomString(16);
-		init(k.getBytes(), i.getBytes());
+		final byte[] k = getRandomString(16);
+		final byte[] i = getRandomString(16);
+		init(k, i);
 	}
 
 	public Aes(final byte[] data) throws IOException {
@@ -147,13 +146,15 @@ final class Aes {
 	 * @param size
 	 * @return
 	 */
-	private static String getRandomString(int size) {
-		RandomStringGenerator randomStringGenerator =
-		        new RandomStringGenerator.Builder()
-		                .withinRange('0', 'z')
-		                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
-		                .build();
-		return randomStringGenerator.generate(size); 
+	protected static byte[] getRandomString(final int size)  {
+		
+		final ByteBuffer cb = ByteBuffer.allocate(size);
+		
+        for (int i = 0; i < size; i++) {
+            int rndIndex = randomSecureRandom.nextInt(ALPHANUM.length);
+            cb.put(ALPHANUM[rndIndex]);
+        }
+        return cb.array();
 	}
 	
 	/**

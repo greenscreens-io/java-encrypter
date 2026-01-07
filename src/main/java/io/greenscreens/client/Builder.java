@@ -11,34 +11,11 @@ import java.time.Duration;
  */
 import java.net.URI;
 import java.security.Key;
-import java.security.KeyManagementException;
 import java.security.KeyPair;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.spec.SecretKeySpec;
-import javax.net.ssl.SSLContext;
-
-import org.apache.commons.codec.binary.Base32;
-import org.apache.http.client.fluent.AuthResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
 
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
 
@@ -296,7 +273,7 @@ public final class Builder {
 			try {
 				final TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
 
-				final byte[] data = new Base32().decode(otpKey);
+				final byte[] data = Utils.decodeOTPKey(otpKey);
 				final Key key = new SecretKeySpec(data, totp.getAlgorithm());
 
 				final Instant now = Instant.now();
@@ -343,17 +320,7 @@ public final class Builder {
 	 * @throws Exception
 	 */
 	private String getServerData() throws Exception {
-
-		final URIBuilder builder = new URIBuilder(url + authUrl);
-		builder.setParameter("modern", isModern() ? "1" : "0");
-
-		final HttpGet httpGet = new HttpGet(builder.build());
-	
-		final CloseableHttpResponse response = Builder.noSslHttpClient().execute(httpGet);
-		final AuthResponse authResp = new AuthResponse(response);
-		final String data = authResp.returnContent().asString();
-		authResp.discardContent();
-		return data;
+		return Utils.sendGet(String.format("%s&s?modern=%s", url, authUrl, isModern() ? "1" : "0"));
 	}
 
 	/*
@@ -433,13 +400,8 @@ public final class Builder {
 		
 		final String v = Integer.toString(Long.toString(appID).hashCode());
 
-		final URIBuilder builder = new URIBuilder(url + LOGIN_URL_2)
-				.setParameter("d", data)
-				.setParameter("k", key)
-				.setParameter("v", v)
-				.setParameter("t", "1");
-		
-		return builder.build();
+		final String s = String.format("%s%s?d=%s&k=%s&v=%s&t=1", url, LOGIN_URL_2, data, key, v);
+		return URI.create(s);
 	}
 
 	/**
@@ -462,13 +424,14 @@ public final class Builder {
 
 		final String service = auth.getBuild() >= 20220725 ? LOGIN_URL_2 : LOGIN_URL_1;
 
-		final URIBuilder builder = new URIBuilder(url + service).setParameter("d", aesJson).setParameter("k", enc).setParameter("v", v);
-		
+		String uri = null;		
 		if (auth.getVer() > 5 || isModern()) {
-			builder.setParameter("t", "1");
-		}
+			uri = String.format("%s%s?d=%s&k=%s&v=%s&t=1", url, service, aesJson, enc, v);
+		} else {
+			uri = String.format("%s%s?d=%s&k=%s&v=%s", url, service, aesJson, enc, v);			
+		}			
 		
-		return builder.build();
+		return URI.create(uri);
 	}
 	
 	/**
@@ -479,36 +442,4 @@ public final class Builder {
 		return url.startsWith("https");
 	}
 	
-	/**
-	 * HTTP Client with support for SSL NOTE - for TLS 1.3 Java 12+ is required
-	 * 
-	 * @return
-	 * @throws KeyManagementException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyStoreException
-	 */
-	private static CloseableHttpClient noSslHttpClient()
-			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-
-		final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-			public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-				return true;
-			}
-		}).build();
-
-		// Java 11 or newer supports TLSv1.3
-		final int ver = Utils.getVersion();
-		final String[] versions = ver > 11 ? new String[] { "TLSv1.2", "TLSv1.3" } :new String[] { "TLSv1.2"};
-
-		final SSLConnectionSocketFactory factory = new SSLConnectionSocketFactory(sslContext, versions, null,
-				NoopHostnameVerifier.INSTANCE);
-
-		final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(
-				RegistryBuilder.<ConnectionSocketFactory>create()
-						.register("http", PlainConnectionSocketFactory.INSTANCE).register("https", factory).build());
-
-		return HttpClients.custom().setSSLSocketFactory(factory).setConnectionManager(manager).build();
-	}
-
-
 }
