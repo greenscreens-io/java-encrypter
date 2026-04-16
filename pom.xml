@@ -34,7 +34,7 @@
 	<junit.platform.version>1.7.0</junit.platform.version>
 	
 	<jackson.version>2.15.4</jackson.version>
-	<bcastle.version>1.82</bcastle.version>
+	<bcastle.version>1.84</bcastle.version>
 	<slf4j.version>1.7.36</slf4j.version>		
   </properties>
   <dependencies>
