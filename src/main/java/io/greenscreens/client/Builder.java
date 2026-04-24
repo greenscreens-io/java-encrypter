@@ -320,7 +320,7 @@ public final class Builder {
 	 * @throws Exception
 	 */
 	private String getServerData() throws Exception {
-		return Utils.sendGet(String.format("%s&s?modern=%s", url, authUrl, isModern() ? "1" : "0"));
+		return Utils.sendGet(String.format("%s%s?modern=%s", url, authUrl, isModern() ? "1" : "0"));
 	}
 
 	/*
