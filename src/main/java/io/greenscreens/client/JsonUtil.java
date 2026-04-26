@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2023 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -22,15 +22,18 @@ class JsonUtil {
 
     static {
         OBJECT_MAPPER = new ObjectMapper();
-
-        OBJECT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).
-                      disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES).
-                      disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT).
-                      disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         
-        OBJECT_MAPPER.setSerializationInclusion(Include.NON_NULL);
-        OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		OBJECT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+		.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+		.disable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+		OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		OBJECT_MAPPER.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX);        
+
+        OBJECT_MAPPER.setDefaultPropertyInclusion(Include.NON_NULL);
+                
     }
 
 

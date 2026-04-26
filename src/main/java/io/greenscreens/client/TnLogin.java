@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2023 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -75,20 +75,20 @@ class TnLogin {
 	 * Used with bypass signon feature
 	 * If username and password are set, this should be set also
 	 */
-	private long ts = 0;
+	private long ts;
 
 	/**
 	 * Expiration timestamp
 	 * After given time, encrypted URL will not be valid any more
 	 */
-	private long exp = 0;
+	private long exp;
 	
 	/**
 	 * Expiration mode determine what happens link is expired
 	 * 0 - strict mode - disconnect session
-	 * 1 - flexible mode - shows sign-on  
+	 * 0 - flex   mode - shows signon  
 	 */
-	private int expMode = 0;
+	private int expMode;
 	
 	
 	public String getUuid() {
@@ -111,7 +111,7 @@ class TnLogin {
 		return user;
 	}
 	
-	public void setUser(final String user) {
+	public void setUser(String user) {
 		if (Objects.nonNull(user) && user.startsWith("*")) throw new RuntimeException("User name cant start with a '*' character!");
 		this.user = user;
 	}
@@ -120,7 +120,7 @@ class TnLogin {
 		return password;
 	}
 	
-	public void setPassword(final String password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 	
@@ -128,7 +128,7 @@ class TnLogin {
 		return program;
 	}
 	
-	public void setProgram(final String program) {
+	public void setProgram(String program) {
 		this.program = program;
 	}
 	
@@ -136,7 +136,7 @@ class TnLogin {
 		return menu;
 	}
 	
-	public void setMenu(final String menu) {
+	public void setMenu(String menu) {
 		this.menu = menu;
 	}
 	
@@ -144,7 +144,7 @@ class TnLogin {
 		return lib;
 	}
 	
-	public void setLib(final String lib) {
+	public void setLib(String lib) {
 		this.lib = lib;
 	}
 	
@@ -152,7 +152,7 @@ class TnLogin {
 		return displayName;
 	}
 	
-	public void setDisplayName(final String displayName) {
+	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
 	
@@ -160,7 +160,7 @@ class TnLogin {
 		return printerName;
 	}
 	
-	public void setPrinterName(final String printerName) {
+	public void setPrinterName(String printerName) {
 		this.printerName = printerName;
 	}
 	
@@ -168,7 +168,7 @@ class TnLogin {
 		return driver;
 	}
 	
-	public void setDriver(final int driver) {
+	public void setDriver(int driver) {
 		this.driver = driver;
 	}
 	
@@ -176,7 +176,7 @@ class TnLogin {
 		return codePage;
 	}
 	
-	public void setCodePage(final String codePage) {
+	public void setCodePage(String codePage) {
 		this.codePage = codePage;
 	}
 	
@@ -184,7 +184,7 @@ class TnLogin {
 		return commonName;
 	}
 	
-	public void setCommonName(final String commonName) {
+	public void setCommonName(String commonName) {
 		this.commonName = commonName;
 	}
 	
@@ -192,7 +192,7 @@ class TnLogin {
 		return ipAddress;
 	}
 	
-	public void setIpAddress(final String ipAddress) {
+	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
 	
@@ -200,7 +200,7 @@ class TnLogin {
 		return appID;
 	}
 	
-	public void setAppID(final long appID) {
+	public void setAppID(long appID) {
 		this.appID = appID;
 	}
 	
@@ -208,7 +208,7 @@ class TnLogin {
 		return token;
 	}
 	
-	public void setToken(final String token) {
+	public void setToken(String token) {
 		this.token = token;
 	}
 	
@@ -216,7 +216,7 @@ class TnLogin {
 		return ts;
 	}
 	
-	public void setTs(final long ts) {
+	public void setTs(long ts) {
 		this.ts = ts;
 	}
 
@@ -224,7 +224,7 @@ class TnLogin {
 		return exp;
 	}
 
-	public void setExp(final long exp) {
+	public void setExp(long exp) {
 		this.exp = exp;
 	}
 
@@ -232,7 +232,7 @@ class TnLogin {
 		return expMode;
 	}
 
-	public void setExpMode(final int expMode) {
+	public void setExpMode(int expMode) {
 		this.expMode = expMode;
 	}
 
@@ -240,7 +240,7 @@ class TnLogin {
 		return key;
 	}
 
-	public void setKey(final String key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
 
@@ -248,7 +248,7 @@ class TnLogin {
 		return otp;
 	}
 
-	public void setOtp(final int otp) {
+	public void setOtp(int otp) {
 		this.otp = otp;
 	}
 	

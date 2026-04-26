@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 - 2023 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.client;
 
@@ -15,6 +15,7 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.spec.SecretKeySpec;
 
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
@@ -23,16 +24,11 @@ import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
  * Green Screens Web Terminal Connection generator builder
  */
 public final class Builder {
-
-	/**
-	 * To support older GS server version
-	 */
-	public static final String LOGIN_URL_1 = "/lite";
-
+    
 	/**
 	 * GS Server build GT 20220725
 	 */
-	public static final String LOGIN_URL_2 = "/terminal";
+	public static final String LOGIN_URL = "/terminal";
 
 	public static final String AUTH_URL = "/services/auth";
 
@@ -323,9 +319,9 @@ public final class Builder {
 		return Utils.sendGet(String.format("%s%s?modern=%s", url, authUrl, isModern() ? "1" : "0"));
 	}
 
+    
 	/*
-	 * Java 17 Http client; no need for apache http lib. public URI build2() throws
-	 * Exception {
+	 * Java 17 Http client; 
 	 * 
 	 * final SSLContext sslContext = new SSLContextBuilder()
 	 * .loadTrustMaterial(null, new TrustStrategy() { public boolean
@@ -355,7 +351,7 @@ public final class Builder {
 	 * @throws Exception
 	 */
 	public String toJSON() throws Exception {
-
+		
 		final String data = getServerData();
 		final TnAuth auth = JsonUtil.parse(TnAuth.class, data);
 
@@ -382,6 +378,19 @@ public final class Builder {
 	}
 
 	/**
+	 * Terminal URL format for GSv5 or +GSv6
+	 * @param version
+	 * @return
+	 */
+	private String getFormat(final int version) {
+		if (version > 5 || isModern()) {
+			return "%s%s?d=%s&k=%s&v=%s&t=1";
+		} else {
+			return "%s%s?d=%s&k=%s&v=%s";			
+		}	
+	}
+	
+	/**
 	 * Create encrypted URI for GSv6 or newer versions
 	 * @param auth
 	 * @return
@@ -398,9 +407,9 @@ public final class Builder {
 		final String key = SharedSecret.flatten(keyPair);
 		final String data = aes.encrypt(login.toJson());
 		
-		final String v = Integer.toString(Long.toString(appID).hashCode());
-
-		final String s = String.format("%s%s?d=%s&k=%s&v=%s&t=1", url, LOGIN_URL_2, data, key, v);
+		final String v = Integer.toString(Math.abs(Long.toString(appID).hashCode()));
+		final String format = getFormat(auth.getVer());
+		final String s = String.format(format, url, LOGIN_URL, data, key, v);
 		return URI.create(s);
 	}
 
@@ -420,18 +429,10 @@ public final class Builder {
 
 		final String aesJson = aesCrypt.encrypt(login.toJson());
 		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk, isModern());
-		final String v = Integer.toString(Long.toString(appID).hashCode());
-
-		final String service = auth.getBuild() >= 20220725 ? LOGIN_URL_2 : LOGIN_URL_1;
-
-		String uri = null;		
-		if (auth.getVer() > 5 || isModern()) {
-			uri = String.format("%s%s?d=%s&k=%s&v=%s&t=1", url, service, aesJson, enc, v);
-		} else {
-			uri = String.format("%s%s?d=%s&k=%s&v=%s", url, service, aesJson, enc, v);			
-		}			
+		final String v = Integer.toString(Math.abs(Long.toString(appID).hashCode()));
 		
-		return URI.create(uri);
+		final String format = getFormat(auth.getVer());		
+		return URI.create(String.format(format, url, LOGIN_URL, aesJson, enc, v));
 	}
 	
 	/**
@@ -441,5 +442,22 @@ public final class Builder {
 	private boolean isModern() {
 		return url.startsWith("https");
 	}
-	
+		
+	public URI build(final TnAuth auth) throws Exception {
+		final Aes aesCrypt = Aes.get();
+		final PublicKey pk = RsaUtil.getPublicKey(auth.getKey());
+
+		setTimestamp(auth.getTs());
+		final TnLogin login = getLogin();
+
+		final String json = JsonUtil.stringify(login);
+		final String aesJson = aesCrypt.encrypt(json);
+		final String enc = RsaUtil.encrypt(aesCrypt.getSpec(), pk, isModern());
+		final String v = Integer.toString(Long.toString(appID).hashCode());
+
+		final String format = getFormat(auth.getVer());
+		final String s = String.format(format, url, LOGIN_URL, aesJson, enc, v);
+		return URI.create(s);
+	}
+
 }

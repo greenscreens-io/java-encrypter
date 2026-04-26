@@ -1,13 +1,15 @@
 /*
- * Copyright (C) 2015 - 2023 Green Screens Ltd.
+ * Copyright (C) 2015 - 2022 Green Screens Ltd.
  */
 package io.greenscreens.client;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Object to parse auth key for data encryption.
  * Key contains public key for password encryption 
  */
-class TnAuth {
+public class TnAuth {
 
 	private long ts;
 	private int ver;
@@ -24,7 +26,7 @@ class TnAuth {
 		return ts;
 	}
 	
-	public void setTs(final long ts) {
+	public void setTs(long ts) {
 		this.ts = ts;
 	}
 	
@@ -32,7 +34,7 @@ class TnAuth {
 		return ver;
 	}
 	
-	public void setVer(final int ver) {
+	public void setVer(int ver) {
 		this.ver = ver;
 	}
 	
@@ -40,7 +42,7 @@ class TnAuth {
 		return key;
 	}
 	
-	public void setKey(final String key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
 	
@@ -48,7 +50,7 @@ class TnAuth {
 		return ip;
 	}
 	
-	public void setIp(final String ip) {
+	public void setIp(String ip) {
 		this.ip = ip;
 	}
 
@@ -56,7 +58,7 @@ class TnAuth {
 		return version;
 	}
 
-	public void setVersion(final String version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 
@@ -64,8 +66,13 @@ class TnAuth {
 		return build;
 	}
 
-	public void setBuild(final int build) {
+	public void setBuild(int build) {
 		this.build = build;
+	}
+	
+	@JsonIgnore
+	public String toJson() throws Exception {
+		return JsonUtil.stringify(this);
 	}
 
 }

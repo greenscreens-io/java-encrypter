@@ -26,8 +26,8 @@ final class Aes {
 
 	private static Logger LOG = LoggerFactory.getLogger(Aes.class);
 	
-	final private static byte[] ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".getBytes();
 	final private static Charset UTF8 = StandardCharsets.UTF_8;
+	final private static byte[] ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".getBytes();
 	
 	private static Cipher cipher;
 	private static SecureRandom randomSecureRandom; 
@@ -38,7 +38,7 @@ final class Aes {
 	static {
 		try {
 			cipher = Cipher.getInstance("AES/CTR/NoPadding");	
-			randomSecureRandom = SecureRandom.getInstance("SHA1PRNG");
+			randomSecureRandom = SecureRandom.getInstanceStrong();
 		} catch (GeneralSecurityException e) {
 			LOG.error(e.getMessage(), e);
 		}
