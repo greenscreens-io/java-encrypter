@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import io.greenscreens.client.Builder;
 import io.greenscreens.client.IpUtils;
+import io.greenscreens.client.Utils;
 
 /**
  * Servlet example to generate Web Terminal URL 
@@ -33,9 +34,7 @@ public class ServletExample2 extends HttpServlet {
 	@Override
 	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 		
-		final String ipAddress = IpUtils.findClientIP(req.getRemoteAddr(), v -> req.getHeader(v));
-		
-		//final String ipAddress = IpUtils.getClientIpAddress(req);		
+		final String ipAddress = IpUtils.findClientIP(req.getRemoteAddr(), v -> req.getHeader(v));		
 		final long appID = getFingerprint(req);
 			
 		try {
@@ -75,8 +74,8 @@ public class ServletExample2 extends HttpServlet {
 		long appID = 0;
 		
 		try {
-			if (nonEmpty(fingerprint)) {
-				appID = Long.parseLong(fingerprint);
+			if (Utils.nonEmpty(fingerprint)) {
+				appID = Math.abs(Long.parseLong(fingerprint));
 			}
 		} catch (NumberFormatException e ) {
 			e.printStackTrace();
@@ -86,31 +85,4 @@ public class ServletExample2 extends HttpServlet {
 				
 	}
 
-	/**
-	 * Is string value non-empty
-	 * @param value
-	 * @return
-	 */
-	protected boolean nonEmpty(final String value) {
-		return !isEmpty(value);
-	}
-
-	/**
-	 * Is string value empty
-	 * @param value
-	 * @return
-	 */
-	protected boolean isEmpty(final String value) {
-		return normalize(value).length() == 0;
-	}
-
-	/**
-	 * Normalize string to non null value
-	 * @param value
-	 * @return
-	 */
-	protected String normalize(final String value) {
-		if (value == null) return "";
-		return value.trim();
-	}
 }
