@@ -2,9 +2,10 @@ v2.3.0 28.04.2026
 ===================
  - Update minimum Java 9 version
  - Refactor IpUtils
+ - Refactor Servlet samples
+ - Move samples to test
  - Add Jakarta Servlet API
  - Add Jakarta demo
- - Mode samples to test
 
 v2.2.0 24.04.2026
 ===================
