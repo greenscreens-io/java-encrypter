@@ -4,17 +4,16 @@
 package io.greenscreens.sample;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URI;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import io.greenscreens.client.Builder;
 import io.greenscreens.client.IpUtils;
-import io.greenscreens.client.Utils;
 
 /**
  * Servlet example to generate Web Terminal URL 
@@ -22,9 +21,8 @@ import io.greenscreens.client.Utils;
 public class ServletExample2 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOG = LoggerFactory.getLogger(ServletExample.class);
 	
-	// Green Screens Server URL
-	private static final String URL  = "http://localhost:9080/";
 
 	/**
 	 * Use fingerprint.js inside browser to generate browser id
@@ -33,26 +31,18 @@ public class ServletExample2 extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-		
-		final String ipAddress = IpUtils.findClientIP(req.getRemoteAddr(), v -> req.getHeader(v));		
-		final long appID = getFingerprint(req);
 			
 		try {
-			final Builder builder = Builder.get(URL, appID, null, null);
-			builder.setUUID("2").setHost("DEMO");
-			builder.setUser("QSECOFR").setPassword("QSECOFR");
-			builder.setIpAddress(ipAddress);
-			
-			final URI uri = builder.build();
-			
 			resp.setContentType("text/plain");
 			
-			final PrintWriter out = resp.getWriter();			
-			out.print(uri.toString());
-			out.flush();
+			final long appID = ServletHelper.getFingerprint(req.getParameter("fp"));
+			final String ipAddress = IpUtils.findClientIP(req.getRemoteAddr(), v -> req.getHeader(v));		
+			final URI uri = ServletHelper.toURI(ipAddress, appID);			
+			ServletHelper.write(resp.getWriter(), uri);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage());
+			LOG.debug(e.getMessage(), e);
 			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 				
@@ -61,28 +51,6 @@ public class ServletExample2 extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {		
 		doGet(req, resp);
-	}
-
-	/**
-	 * Get client browser fingerprint calculated with fingerprint.js
-	 * @param req
-	 * @return
-	 */
-	protected long getFingerprint(final HttpServletRequest req) {
-		
-		final String fingerprint = req.getParameter("fp");
-		long appID = 0;
-		
-		try {
-			if (Utils.nonEmpty(fingerprint)) {
-				appID = Math.abs(Long.parseLong(fingerprint));
-			}
-		} catch (NumberFormatException e ) {
-			e.printStackTrace();
-		}
-
-		return appID;
-				
 	}
 
 }
