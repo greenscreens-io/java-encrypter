@@ -24,7 +24,7 @@ enum ServletHelper {
 
 	static URI toURI(final String clientIP, final long appID) throws Exception {
 		final Builder builder = Builder.get(URL, appID, null, null);
-		builder.setUUID("2").setHost("DEMO");
+		builder.setUUID("DEMO").setHost("DEMO");
 		builder.setUser("QSECOFR").setPassword("QSECOFR");
 		builder.setIpAddress(clientIP);		
 		return builder.build();
