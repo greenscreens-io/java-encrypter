@@ -33,7 +33,7 @@ public class ServletExample extends HttpServlet {
 	@Override
 	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 		
-		final String ipAddress = IpUtils.getClientIpAddress(req);		
+		final String ipAddress = IpUtils.findClientIP(req.getRemoteAddr(), v -> req.getHeader(v));
 		final long appID = getFingerprint(req);
 			
 		try {

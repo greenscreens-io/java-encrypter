@@ -101,9 +101,26 @@ public enum Utils {
 		}
 
 		return data.trim();
-
 	}	
 
+	/**
+	 * Check if string is empty, ignore whitespace
+	 * @param data
+	 * @return
+	 */
+	public static boolean isEmpty(final String data) {
+		return normalize(data).length() == 0;
+	}
+
+	/**
+	 * Check if string is non-empty, ignore whitespace
+	 * @param data
+	 * @return
+	 */
+	public static boolean nonEmpty(final String data) {
+		return normalize(data).length() > 0;
+	}
+	
 	/**
 	 * Plain Java HTTP get
 	 * @param urlString
