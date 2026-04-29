@@ -17,7 +17,10 @@ public enum IpUtils {
 
 	private static final String _255 = "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";	
 	private static final Pattern pattern = Pattern.compile("^(?:" + _255 + "\\.){3}" + _255 + "$");
-	
+
+	public static final String IP6_LOCAL = "0:0:0:0:0:0:0:1";
+	public static final String IP4_LOCAL = "127.0.0.1";
+
 	/**
 	 * HTTP headers that might contain IP address
 	 */
@@ -61,9 +64,11 @@ public enum IpUtils {
 
 		if (!found) {
 			tmp = null;
-		} 
+		} else if (IP6_LOCAL.equals(tmp)) {
+			tmp = IP4_LOCAL;
+		}
 		
-		return "unknown".equalsIgnoreCase(tmp) ? null : tmp;
+		return tmp;
 	}
 
 	/**
@@ -80,7 +85,7 @@ public enum IpUtils {
 				.map(v -> detectIP(v))
 				.filter(v -> Utils.nonEmpty(v))
 				.findFirst()
-				.orElse(defaultIP);
+				.orElse(detectIP(defaultIP));
 	}
 
 }
